@@ -1,20 +1,26 @@
 import React, {useState, useEffect} from 'react';
+import { useSelector } from 'react-redux';
+
+import { NavLink, Link } from "react-router-dom";
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
-import logoBlack from '../../assets/img/png/tooth-black.png';
+import logoColor from '../../assets/img/png/tooth-color.png';
 import logoWhite from '../../assets/img/png/tooth-white.png';
 
 const NavbarComponent = () => {
   const [scrollNav, setScrollNav] = useState(false);
+  const transparent = useSelector((state) => state.navbarTransparent.transparent);
 
   const changeNav = () => {
+    if (transparent) {
       if (window.scrollY >= 80) {
-          setScrollNav(true);
+        setScrollNav(true);
       } else {
           setScrollNav(false);
       }
+    }
   }
 
   useEffect(() => {
@@ -22,11 +28,11 @@ const NavbarComponent = () => {
   }, []);
 
   return (
-    <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)}>
+    <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)}>
       <Container>
-        <Navbar.Brand href="#home">
+        <Navbar.Brand as={Link} to="/">
           <img
-            src={scrollNav ? logoBlack : logoWhite}
+            src={scrollNav || !transparent ? logoColor : logoWhite}
             width="30"
             height="30"
             className="d-inline-block align-top"
@@ -37,10 +43,8 @@ const NavbarComponent = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-                <Nav.Link href="#link_1">Link 1</Nav.Link>
-                <Nav.Link href="#link_2">Link 2</Nav.Link>
-                <Nav.Link href="#link_3">Link 3</Nav.Link>
-
+                <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
+                <Nav.Link as={NavLink} to="/register">Register</Nav.Link>
             </Nav>
             {/* <Nav>
             <Nav.Link href="#deets">More deets</Nav.Link>

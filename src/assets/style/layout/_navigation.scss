@@ -6,6 +6,7 @@
   .navbar-brand {
     .brand-name {
       color: base.$white-0 !important;
+      text-decoration: none;
     }
   }
 
@@ -37,6 +38,8 @@
     .brand-name {
       padding-left: 12px;
       font-weight: base.$semibold;
+      color: base.$primary-2 !important;
+      text-decoration: none;
     }
   }
 
