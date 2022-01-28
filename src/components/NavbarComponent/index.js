@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { NavLink, Link } from "react-router-dom";
@@ -13,7 +13,7 @@ const NavbarComponent = () => {
   const [scrollNav, setScrollNav] = useState(false);
   const transparent = useSelector((state) => state.navbarTransparent.transparent);
 
-  const changeNav = () => {
+  const changeNav = useCallback(() => {
     if (transparent) {
       if (window.scrollY >= 80) {
         setScrollNav(true);
@@ -21,11 +21,11 @@ const NavbarComponent = () => {
           setScrollNav(false);
       }
     }
-  }
+  }, [transparent]);
 
   useEffect(() => {
       window.addEventListener('scroll', changeNav);
-  }, []);
+  }, [changeNav]);
 
   return (
     <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)}>
