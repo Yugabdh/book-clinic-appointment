@@ -5,16 +5,26 @@ const useForm = (validate) => {
   const [values, setValues] = useState({});
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [startRequest, setStartRequest] = useState(false);
+  const [OTPRequested, setOTPRequested] = useState(false);
+  const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     if (Object.keys(errors).length === 0 && isSubmitting) {
-      console.log('No errors, submit callback called!');
+      if (!startRequest) {
+        setStartRequest(true);
+      }
+      if (values.formPassword) {
+        if (values.formPassword.length === 6) {
+          setIsValid(true);
+        }
+      }
     }
-  }, [errors, isSubmitting]);
+  }, [values, errors, isSubmitting, startRequest]);
 
   const handleSubmit = (event) => {
     if (event) event.preventDefault();
-    setErrors(validate(values));
+    setErrors(validate(values, OTPRequested));
     setIsSubmitting(true);
   };
 
@@ -28,6 +38,11 @@ const useForm = (validate) => {
     handleSubmit,
     values,
     errors,
+    OTPRequested,
+    setOTPRequested,
+    startRequest,
+    setStartRequest,
+    isValid,
   }
 };
 

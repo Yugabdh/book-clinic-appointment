@@ -1,0 +1,15 @@
+.vc-modal {
+  &.error {
+    .modal-content {
+      background-color: rgba(255, 83, 83, 0.9);
+      color: #fff;
+    }
+  }
+
+    &.sucess {
+      .modal-content {
+        background-color: rgba(0, 255, 28, 0.7);;
+        color: #000;
+      }
+    }
+}
