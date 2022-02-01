@@ -11,6 +11,8 @@ import { makeVisible } from '../../redux/navbarTransparent';
 
 import { useAuth } from '../../contexts/AuthContext';
 
+import ProfileComponent from '../../components/ProfileComponent';
+
 const DashboardPage = () => {
   const dispatch = useDispatch();
   // trigger on component mount
@@ -18,25 +20,14 @@ const DashboardPage = () => {
     dispatch(makeVisible());
   });
 
-  const { logOut } = useAuth();
-
-  async function handleSignOut() {
-    try {
-      await logOut();
-      navigate("/", { replace: true });
-    } catch {
-      console.log("error");
-    }
-  }
-  const navigate = useNavigate();
-
   return(
-    <section style={{height: '100vh', paddingTop: '140px'}}>
+    <section className="dashboard-section">
       <Container>
         <Row className="justify-content-center">
-          <Col>
-          <h1 className="align-self-center">Dashboard</h1>
-          <button className="btn btn-primary" onClick={ handleSignOut }>Log out</button>
+          <Col sm={12} lg={4}>
+            <ProfileComponent />
+          </Col>
+          <Col sm={12} lg={8}>
           </Col>
         </Row>
       </Container>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 
 const CallToActionComponent = () => {
@@ -9,7 +10,7 @@ const CallToActionComponent = () => {
             <div className="call">
                 <p className="call-text">Sign Up To Book Appoitnment</p>
             </div>
-            <div className="action"><a href="/" className="btn primary-button button-lg">Sign Up!</a></div>
+            <div className="action"><Link to="/login" className="btn primary-button button-lg">Sign Up!</Link></div>
           </Container>
       </div>
     </section>

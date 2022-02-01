@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
@@ -13,7 +14,7 @@ const HeroHeaderComponent = () => {
                 <h1 className="hero-header-title">Strong & Healthy Teeth With <br /><span className="highlight">Ragul Family Dental</span></h1>
                 <p className="hero-header-description">Ragul Family Dental clinic provide high quality dental treatment with affordable payment plans</p>
                 <div className="hero-header-call-to-action">
-                  <a className="btn primary-button button-lg" href="/">Book Appointment</a>
+                  <Link className="btn primary-button button-lg" to="/login">Book Appointment</Link>
                 </div>
             </Col>
             <Col md={12} lg={6} className="d-none d-lg-block"></Col>
