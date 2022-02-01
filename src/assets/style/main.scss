@@ -6,6 +6,7 @@
 @use './components/button';
 @use './components/imageWrapperForm';
 @use './components/verticalCenteredModal';
+@use './components/cardComponentWithHeading';
 
 // layout
 @use './layout/navigation';
@@ -14,3 +15,4 @@
 // pages
 @use './pages/landing';
 @use './pages/dashboard';
+@use './pages/profile';

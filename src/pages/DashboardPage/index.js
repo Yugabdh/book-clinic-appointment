@@ -1,33 +1,45 @@
 import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
 
 import { makeVisible } from '../../redux/navbarTransparent';
+import { SET_UID, getUserData } from '../../redux/userSlice';
 
 import { useAuth } from '../../contexts/AuthContext';
 
 import ProfileComponent from '../../components/ProfileComponent';
+import CardComponentWithHeading from '../../components/CardComponentWithHeading';
 
 const DashboardPage = () => {
   const dispatch = useDispatch();
+
   // trigger on component mount
   useEffect(() => {
     dispatch(makeVisible());
   });
 
+  const { currentUser } = useAuth();
+  useEffect(() => {
+    // Set UID
+    dispatch(SET_UID(currentUser.uid));
+    // console.log(uid);
+    // get User Data
+    dispatch(getUserData());
+  }, [dispatch, currentUser.uid]);
+
+  const userSlice = useSelector((state) => state.userSlice);
   return(
     <section className="dashboard-section">
       <Container>
         <Row className="justify-content-center">
           <Col sm={12} lg={4}>
-            <ProfileComponent />
+            <ProfileComponent phoneNumber={currentUser.phoneNumber} userSlice={userSlice}/>
           </Col>
-          <Col sm={12} lg={8}>
+          <Col sm={12} lg={8} className="pt-5 pt-lg-0">
+            <CardComponentWithHeading heading="Appointments" />
           </Col>
         </Row>
       </Container>

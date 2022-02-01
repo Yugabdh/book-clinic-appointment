@@ -12,17 +12,17 @@ import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
   return (
-    <Provider store={store}>
-      <AuthProvider>
-        <BrowserRouter>
-          <NavbarComponent />
-            <main>
-              <RoutesConfig />
-            </main>
-          <FooterComponent />
-        </BrowserRouter>
-      </AuthProvider>
-    </Provider>
+    <AuthProvider>
+      <Provider store={store}>
+          <BrowserRouter>
+            <NavbarComponent />
+              <main>
+                <RoutesConfig />
+              </main>
+            <FooterComponent />
+          </BrowserRouter>
+      </Provider>
+    </AuthProvider>
   );
 }
 
