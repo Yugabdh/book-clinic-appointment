@@ -11,9 +11,7 @@ const CardComponentWithHeading = (props) => {
         <Col lg={12}>
           <div className="card-heading-wrapper">
             <div className="card-body p-3">
-              <h3 className="card-heading">
-                { props.heading }
-              </h3>
+              { props.heading }
               <hr />
               <div className="card-heading-content">
                 { props.children }

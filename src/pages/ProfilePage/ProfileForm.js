@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUserData } from '../../redux/userSlice';
 
-import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
-import { useNavigate } from "react-router-dom";
 
 const ProfileForm = () => {
   const dispatch = useDispatch();
@@ -19,25 +17,31 @@ const ProfileForm = () => {
 
   // Form inputs
   const [values, setValues] = useState({
-    formFirstName: userSlice.userData.firstName? userSlice.userData.firstName: '',
-    formLastName: userSlice.userData.lastName? userSlice.userData.lastName: '',
-    formage: userSlice.userData.age? userSlice.userData.age: 19,
-    formGender: userSlice.userData.gender? userSlice.userData.gender: '',
+    formFirstName: userSlice.userData? userSlice.userData.firstName? userSlice.userData.firstName: '': '',
+    formLastName: userSlice.userData? userSlice.userData.lastName? userSlice.userData.lastName: '': '',
+    formage: userSlice.userData? userSlice.userData.age? userSlice.userData.age: 18: 18,
+    formGender: userSlice.userData? userSlice.userData.gender? userSlice.userData.gender: '': '',
   });
 
   // Errors values for input
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const updateFirebase = useCallback(() => {
+    console.log('called')
+    const firstName = values.formFirstName;
+    const lastName = values.formLastName;
+    const age = values.formage;
+    const gender = values.formGender;
+    dispatch(updateUserData({firstName, lastName, age, gender}));
+  }, [values, dispatch]);
+
   useEffect(() => {
     if (Object.keys(errors).length === 0 && isSubmitting) {
-      const firstName = values.formFirstName;
-      const lastName = values.formLastName;
-      const age = values.formage;
-      const gender = values.formGender;
-      dispatch(updateUserData({firstName, lastName, age, gender}));
+      setIsSubmitting(false);
+      updateFirebase();
     }
-  }, [errors, isSubmitting]);
+  }, [errors, isSubmitting, updateFirebase]);
 
   function validate(values) {
     let errors = {};

@@ -9,7 +9,12 @@
   .card-body {
     .card-heading {
       color: base.$primary-2;
-      font-weight: base.$semibold;
+      font-weight: base.$bold;
+    }
+    .header {
+      .primary-button {
+        padding: 0.5rem 1rem;
+      }
     }
   }
 }

@@ -8,6 +8,7 @@
 .profile-page {
   min-height: 100vh;
   padding-top: 140px;
+  padding-bottom: 70px;
 
 
   .form-control:focus {
@@ -95,11 +96,6 @@
 
     .primary-button {
       width: 100%;
-      border-radius: 5px;
-      -webkit-border-radius: 5px;
-      -moz-border-radius: 5px;
-      -ms-border-radius: 5px;
-      -o-border-radius: 5px;
     }
   }
 }

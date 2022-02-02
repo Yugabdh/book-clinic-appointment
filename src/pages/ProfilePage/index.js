@@ -1,10 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-
 import { makeVisible } from '../../redux/navbarTransparent';
 
 import ProfileForm from './ProfileForm';
@@ -16,13 +12,13 @@ const ProfilePage = () => {
   // trigger on component mount
   useEffect(() => {
     dispatch(makeVisible());
-  });
+  }, [dispatch]);
 
   const profileForm = <ProfileForm />;
 
   return(
     <section className="profile-page">
-      <CardComponentWithHeading heading="Profile" children={profileForm} />
+      <CardComponentWithHeading heading={<h3 className="card-heading">Profile</h3>} children={profileForm} />
     </section>
   );
 };

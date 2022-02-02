@@ -1,5 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Appointments from '../AppointmentPage/Appointments';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -19,7 +21,7 @@ const DashboardPage = () => {
   // trigger on component mount
   useEffect(() => {
     dispatch(makeVisible());
-  });
+  }, [dispatch]);
 
   const { currentUser } = useAuth();
   useEffect(() => {
@@ -31,6 +33,7 @@ const DashboardPage = () => {
   }, [dispatch, currentUser.uid]);
 
   const userSlice = useSelector((state) => state.userSlice);
+
   return(
     <section className="dashboard-section">
       <Container>
@@ -39,7 +42,17 @@ const DashboardPage = () => {
             <ProfileComponent phoneNumber={currentUser.phoneNumber} userSlice={userSlice}/>
           </Col>
           <Col sm={12} lg={8} className="pt-5 pt-lg-0">
-            <CardComponentWithHeading heading="Appointments" />
+          <CardComponentWithHeading 
+            heading={
+              <>
+                <div className="d-flex justify-content-between align-items-center header">
+                  <h3 className="card-heading">Appointments</h3>
+                  <Link to="/appointments" className="primary-button d-none d-md-block">New Appointment</Link>
+                </div>
+              </>
+            } 
+            children={<Appointments />}
+          />
           </Col>
         </Row>
       </Container>
