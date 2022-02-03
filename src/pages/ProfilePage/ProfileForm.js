@@ -34,6 +34,14 @@ const ProfileForm = () => {
     const age = values.formage;
     const gender = values.formGender;
     dispatch(updateUserData({firstName, lastName, age, gender}));
+
+    setModalData({
+      title: "Profile updated",
+        message: "Profile updated successfully.",
+        classname: "sucess"
+    });
+    setModalShow(true);
+
   }, [values, dispatch]);
 
   useEffect(() => {
@@ -83,7 +91,6 @@ const ProfileForm = () => {
             <Form.Control
               autoComplete="off"
               type="text"
-              pattern="[0-9]{10}"
               placeholder="Enter firstname"
               name="formFirstName"
               onChange={handleChange}
@@ -100,7 +107,6 @@ const ProfileForm = () => {
             <Form.Control
               autoComplete="off"
               type="text"
-              pattern="[0-9]{10}"
               placeholder="Enter lastname"
               name="formLastName"
               onChange={handleChange}
@@ -166,8 +172,6 @@ const ProfileForm = () => {
         <Link to="/register">Create an account !</Link>
       </div> */}
     </Form>
-    
-    
     </>
   );
 };

@@ -13,7 +13,7 @@ const ProfileComponent = (props) => {
         <Col lg={12}>
         <div className="profile-wrapper">	
           <div className="profile p-3">
-            <img src={logoColor} className="thumbnail" />
+            <img src={logoColor} className="thumbnail" alt="profile" />
             {props.userSlice? <h3 className="name">{props.userSlice.userData.fullName}</h3>: ''}
             <p className="description">{props.phoneNumber}</p>
             <Link to="/profile" className="primary-button">Edit Profile</Link>

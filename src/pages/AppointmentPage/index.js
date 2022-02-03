@@ -1,11 +1,9 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
-
 import { makeVisible } from '../../redux/navbarTransparent';
 
 import CardComponentWithHeading from '../../components/CardComponentWithHeading';
-import Appointments from './Appointments';
+import AppointmentForm from './AppointmentForm';
 
 const AppointmentPage = () => {
   const dispatch = useDispatch();
@@ -14,7 +12,6 @@ const AppointmentPage = () => {
   useEffect(() => {
     dispatch(makeVisible());
   }, [dispatch]);
-  console.log("Appointments");
 
   return (
     <section className="appointment-page">
@@ -22,12 +19,11 @@ const AppointmentPage = () => {
         heading={
           <>
             <div className="d-flex justify-content-between align-items-center header">
-              <h3 className="card-heading">Appointments</h3>
-              <Link to="/appointments" className="primary-button d-none d-md-block">New Appointment</Link>
+              <h3 className="card-heading">Book appointment</h3>
             </div>
           </>
         } 
-        children={<Appointments />}
+        children={<AppointmentForm />}
       />
     </section>
   );
