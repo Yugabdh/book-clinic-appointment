@@ -1,6 +1,6 @@
 import './assets/style/main.scss';
 import { 
-  BrowserRouter
+  HashRouter
 } from 'react-router-dom';
 import { Provider } from 'react-redux';
 
@@ -14,13 +14,13 @@ function App() {
   return (
     <AuthProvider>
       <Provider store={store}>
-          <BrowserRouter>
+          <HashRouter>
             <NavbarComponent />
               <main>
                 <RoutesConfig />
               </main>
             <FooterComponent />
-          </BrowserRouter>
+          </HashRouter>
       </Provider>
     </AuthProvider>
   );

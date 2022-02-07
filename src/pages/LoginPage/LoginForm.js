@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup'
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
 import { useNavigate } from "react-router-dom";
 
@@ -42,8 +43,10 @@ const LoginForm = () => {
       },
       auth
     );
+    const mobileNumber = "+91"+values.formTelNumber;
+    console.log(mobileNumber);
     const appVerifier = window.recaptchaVerifier;
-    signInWithPhoneNumber(auth, values.formTelNumber, appVerifier)
+    signInWithPhoneNumber(auth, mobileNumber, appVerifier)
     .then((confirmationResult) => {
       setModalData({
         title: "OTP send",
@@ -101,9 +104,9 @@ const LoginForm = () => {
       } else {
         if (!values.formTelNumber) {
           errors.formTelNumber = "Please enter contact number.";
-        } else if (!/^\+91[0-9]{10}$/.test(values.formTelNumber)) {
+        } else if (!/^[0-9]{10}$/.test(values.formTelNumber)) {
           console.log(values.formTelNumber);
-          errors.formTelNumber = "Mobile Number should start with +91 and must have 10 digits.";
+          errors.formTelNumber = "Mobile Number must have 10 digits.";
         } else {
           setErrors({});
           generateRecaptcha();
@@ -117,6 +120,7 @@ const LoginForm = () => {
   const handleSubmit = (event) => {
     if (event) event.preventDefault();
     setErrors(validate(values, recaptchaRequest));
+    console.log(values);
   };
 
   const handleChange = (event) => {
@@ -128,19 +132,23 @@ const LoginForm = () => {
     <>
     <Form onSubmit={ handleSubmit } noValidate>
       {currentUser && currentUser.uid}
-      <Form.Group className="mb-3" controlId="formTelNumber">
-        <Form.Control
-          autoComplete="off"
-          type="tel"
-          pattern="[0-9]{10}"
-          placeholder="Enter contact number"
-          name="formTelNumber"
-          value={values.formTelNumber || ''}
-          className={`${errors.formTelNumber && 'wrong-input'}`}
-          onChange={handleChange}
-          required
-          disabled={recaptchaRequest}
-        />
+      <Form.Group className="mb-3">
+        <InputGroup>
+          <InputGroup.Text className="country-span">+91</InputGroup.Text>
+          <Form.Control
+            autoComplete="off"
+            type="tel"
+            pattern="[0-9]{10}"
+            placeholder="Enter contact number"
+            name="formTelNumber"
+            value={values.formTelNumber || ''}
+            className={`${errors.formTelNumber && 'wrong-input'}`}
+            onChange={handleChange}
+            required
+            disabled={recaptchaRequest}
+            aria-describedby="formTelNumber"
+          />
+        </InputGroup>
         {
         errors.formTelNumber && (<Form.Text className="text-danger">{errors.formTelNumber}</Form.Text>)
         }
