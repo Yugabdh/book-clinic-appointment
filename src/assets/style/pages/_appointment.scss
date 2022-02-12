@@ -121,27 +121,6 @@
       &:hover{
         border: 1px solid base.$primary-2;
       }
-      .react-datepicker-ignore-onclickoutside {
-        border: none;
-        &:focus {
-          border: 1px solid base.$primary-2!important;
-          &::-webkit-input-placeholder {
-            color: black;
-            opacity: 1
-          }
-          &::-moz-placeholder {
-            @include placeholder-on-focus
-          }
-          &:-ms-input-placeholder {
-            color: black;
-            opacity: 1
-          }
-          &:-o-input-placeholder {
-            color: black;
-            opacity: 1
-          }
-        }
-      }
       &:focus {
         border: 1px solid base.$primary-2;
         &::-webkit-input-placeholder {
@@ -163,6 +142,29 @@
 
       &.wrong-input {
         border: 1px solid rgb(220,53,69);
+      }
+    }
+
+
+    .react-datepicker-ignore-onclickoutside {
+      border: none;
+      &:focus {
+        border: 1px solid base.$primary-2!important;
+        &::-webkit-input-placeholder {
+          color: black;
+          opacity: 1
+        }
+        &::-moz-placeholder {
+          @include placeholder-on-focus
+        }
+        &:-ms-input-placeholder {
+          color: black;
+          opacity: 1
+        }
+        &:-o-input-placeholder {
+          color: black;
+          opacity: 1
+        }
       }
     }
 

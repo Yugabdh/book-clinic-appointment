@@ -148,17 +148,9 @@ const AppointmentForm = () => {
               dateFormat='dd-MM-yyyy'
               minDate={new Date()}
               maxDate={new Date().setDate(new Date().getDate() + 5)}
-              className={`form-input ${errors.formAppointmentDate && 'wrong-input'}`}
+              className={`form-control ${errors.formAppointmentDate && 'wrong-input'}`}
               filterDate={isWeekday}
             />
-            {/* <Datepicker
-              autoComplete="off"
-              name="formAppointmentDate"
-              onChange={date => handleChangeDate(date)}
-              selectedDate={values.formAppointmentDate}
-              className={`form-input ${errors.formAppointmentDate && 'wrong-input'}`}
-              required
-            /> */}
             {
             errors.formAppointmentDate && (<Form.Text className="text-danger">{errors.formAppointmentDate}</Form.Text>)
             }

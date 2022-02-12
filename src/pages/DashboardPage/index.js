@@ -27,7 +27,6 @@ const DashboardPage = () => {
   useEffect(() => {
     // Set UID
     dispatch(SET_UID(currentUser.uid));
-    // console.log(uid);
     // get User Data
     dispatch(getUserData());
   }, [dispatch, currentUser.uid]);
@@ -50,7 +49,7 @@ const DashboardPage = () => {
                   <Link to="/appointments" className="primary-button d-none d-md-block">New Appointment</Link>
                 </div>
               </>
-            } 
+            }
             children={<Appointments />}
           />
           </Col>
