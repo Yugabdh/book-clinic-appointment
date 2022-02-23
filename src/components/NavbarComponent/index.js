@@ -55,7 +55,7 @@ const NavbarComponent = () => {
   }
 
   return (
-    <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)}>
+    <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)} collapseOnSelect={true}>
       <Container>
         <Navbar.Brand as={Link} to="/">
           <img
@@ -71,12 +71,12 @@ const NavbarComponent = () => {
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
               <NotDisplayIfCurrentUser>
-                <Nav.Link as={NavLink} to="/login">Login</Nav.Link>
+                <Nav.Link as={NavLink} to="/login" href="/login">Login</Nav.Link>
               </NotDisplayIfCurrentUser>
               <DisplayIfCurrentUser>
-                <Nav.Link as={NavLink} to="/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={NavLink} to="/profile">Profile</Nav.Link>
-                <Nav.Link as={NavLink} to="/appointments">Book Appointment</Nav.Link>
+                <Nav.Link as={NavLink} to="/dashboard" href="/dashboard">Dashboard</Nav.Link>
+                <Nav.Link as={NavLink} to="/profile" href="/profile">Profile</Nav.Link>
+                <Nav.Link as={NavLink} to="/appointments" href="/appointments">Book Appointment</Nav.Link>
               </DisplayIfCurrentUser>
             </Nav>
             <Nav>

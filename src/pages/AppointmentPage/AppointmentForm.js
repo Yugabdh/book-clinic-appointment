@@ -54,20 +54,26 @@ const AppointmentForm = () => {
   async function updateFirebase() {
     console.log(values);
     console.log(userSlice.uid);
-    const docRef = await addDoc(collection(db, "users/"+userSlice.uid, "appointments"), {
-      appointmentName: values.formAppointmentName,
-      date: values.formAppointmentDate,
-      slot: values.formSlot,
-      symtoms: values.formSymptoms,
-      status: 'pending'
-    });
-    console.log(docRef);
-    setModalData({
-      title: "Appointment booked",
-      message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + values.formSlot,
-      classname: "sucess"
-    });
-    setModalShow(true);
+    if (userSlice.uid) {
+      if (userSlice.userData) {
+        if (userSlice.userData.fullName) {
+          const docRef = await addDoc(collection(db, "users/"+userSlice.uid, "appointments"), {
+            appointmentName: values.formAppointmentName,
+            date: values.formAppointmentDate,
+            slot: values.formSlot,
+            symtoms: values.formSymptoms,
+            status: 'pending'
+          });
+          console.log(docRef);
+          setModalData({
+            title: "Appointment booked",
+            message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + values.formSlot,
+            classname: "sucess"
+          });
+        }
+      }
+      setModalShow(true);
+    }
   }
 
   // const updateFirebase = useCallback(() => {
@@ -84,7 +90,7 @@ const AppointmentForm = () => {
   function validate(values) {
     let errors = {};
     if (!values.formAppointmentName) {
-      errors.formAppointmentName = "Firstname is required.";
+      errors.formAppointmentName = "Appointment name is required.";
     }
 
     if(!values.formAppointmentDate) {
@@ -119,7 +125,7 @@ const AppointmentForm = () => {
 
   return (
     <>
-    <Form onSubmit={ handleSubmit } noValidate>
+    <Form onSubmit={ handleSubmit } noValidate enableResetScrollToCoords={false}>
       <Form.Group className="mb-3">
         <Row>
           <Col md={12} lg={6}>
@@ -153,23 +159,6 @@ const AppointmentForm = () => {
             />
             {
             errors.formAppointmentDate && (<Form.Text className="text-danger">{errors.formAppointmentDate}</Form.Text>)
-            }
-            
-          </Col>
-
-          <Col md={12} lg={12}>
-            <Form.Label>Symptoms</Form.Label>
-            <Form.Control
-              as="textarea" rows={3}
-              autoComplete="off"
-              name="formSymptoms"
-              onChange={handleChange}
-              value={values.formSymptoms || ''}
-              className={`${errors.formSymptoms && 'wrong-input'}`}
-              required
-            />
-            {
-            errors.formSymptoms && (<Form.Text className="text-danger">{errors.formSymptoms}</Form.Text>)
             }
             
           </Col>
@@ -219,6 +208,22 @@ const AppointmentForm = () => {
             </div>
             {
             errors.formSlot && (<Form.Text className="text-danger">{errors.formSlot}</Form.Text>)
+            }
+          </Col>
+
+          <Col md={12} lg={12}>
+            <Form.Label>Symptoms</Form.Label>
+            <Form.Control
+              as="textarea" rows={3}
+              autoComplete="off"
+              name="formSymptoms"
+              onChange={handleChange}
+              value={values.formSymptoms || ''}
+              className={`${errors.formSymptoms && 'wrong-input'}`}
+              required
+            />
+            {
+            errors.formSymptoms && (<Form.Text className="text-danger">{errors.formSymptoms}</Form.Text>)
             }
             
           </Col>
