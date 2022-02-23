@@ -57,7 +57,7 @@ const NavbarComponent = () => {
   return (
     <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)} collapseOnSelect={true}>
       <Container>
-        <Navbar.Brand as={Link} to="/">
+        <Navbar.Brand as={Link} to={`${!currentUser ? "/" : "/dashboard"}`}>
           <img
             src={scrollNav || !transparent ? logoColor : logoWhite}
             width="30"
@@ -65,7 +65,7 @@ const NavbarComponent = () => {
             className="d-inline-block align-top"
             alt="logo"
           />
-          <span className="brand-name">Raghul Family Dental</span>
+          <span className="brand-name">Ragul Family Dental</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">

@@ -8,6 +8,7 @@ import DatePicker from 'react-datepicker';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import Spinner from 'react-bootstrap/Spinner';
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
 
 const AppointmentForm = () => {
@@ -15,8 +16,9 @@ const AppointmentForm = () => {
   // Modal states
   const [modalData, setModalData] = useState({});
   const [modalShow, setModalShow] = useState(false);
+  const [bookingAppointment, setBookingAppointment] = useState(false);
 
-  const [formDate, setFormDate] = useState(new Date());
+  const [formDate, setFormDate] = useState();
 
   const userSlice = useSelector((state) => state.userSlice);
 
@@ -36,7 +38,7 @@ const AppointmentForm = () => {
   // Form inputs
   const [values, setValues] = useState({
     formAppointmentName: '',
-    formAppointmentDate: converDate(new Date()),
+    formAppointmentDate: '',
     formSymptoms: '',
     formSlot: null
   });
@@ -52,27 +54,43 @@ const AppointmentForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function updateFirebase() {
+    setBookingAppointment(true);
+    const timeToSlotMapping = {
+      "slot1": "09:00 AM-12:00 PM",
+      "slot2": "12:00 PM-03:00 PM",
+      "slot3": "03:00 PM-06:00 PM",
+      "slot4": "06:00 PM-09:00 PM",
+    }
+    console.log(timeToSlotMapping[values.formSlot]);
     console.log(values);
     console.log(userSlice.uid);
     if (userSlice.uid) {
       if (userSlice.userData) {
         if (userSlice.userData.fullName) {
-          const docRef = await addDoc(collection(db, "users/"+userSlice.uid, "appointments"), {
+          const docRef = await addDoc(collection(db, "users/"+userSlice.uid+"/appointments/"+values.formAppointmentDate, "appointments"), {
             appointmentName: values.formAppointmentName,
             date: values.formAppointmentDate,
             slot: values.formSlot,
             symtoms: values.formSymptoms,
             status: 'pending'
-          });
-          console.log(docRef);
-          setModalData({
-            title: "Appointment booked",
-            message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + values.formSlot,
-            classname: "sucess"
+          }).then((ref) => {
+            addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
+              uid: userSlice.uid,
+              appointmentId: ref.id,
+              appointmentName: values.formAppointmentName,
+              symtoms: values.formSymptoms
+            }).then((appointmentRef) => {
+              setModalData({
+                title: "Appointment booked",
+                message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSymptoms],
+                classname: "sucess"
+              });
+              setModalShow(true);
+              setBookingAppointment(false);
+            })
           });
         }
       }
-      setModalShow(true);
     }
   }
 
@@ -125,7 +143,7 @@ const AppointmentForm = () => {
 
   return (
     <>
-    <Form onSubmit={ handleSubmit } noValidate enableResetScrollToCoords={false}>
+    <Form onSubmit={ handleSubmit } noValidate>
       <Form.Group className="mb-3">
         <Row>
           <Col md={12} lg={6}>
@@ -148,8 +166,8 @@ const AppointmentForm = () => {
             <Form.Label>Appointment date</Form.Label>
             <DatePicker
               name="formAppointmentDate"
-              placeholderText="Select appointment day"
               selected={formDate}
+              placeholderText="Select appointment day"
               onChange={date => handleChangeDate(date)}
               dateFormat='dd-MM-yyyy'
               minDate={new Date()}
@@ -167,7 +185,7 @@ const AppointmentForm = () => {
             <div className="slots">
               <div className="title">Choose a apoointment slot</div>
               <label className="slot" htmlFor="slot_1">
-                <input type="radio" value="09:00 AM-12:00 PM" name="formSlot" id="slot_1" checked={values.formSlot === "09:00 AM-12:00 PM"} onChange={handleChange} />
+                <input type="radio" value="slot1" name="formSlot" id="slot_1" checked={values.formSlot === "slot1"} onChange={handleChange} />
                 <div className="slot-content">
                   <div className="slot-details">
                     <span>09:00 AM</span>
@@ -177,7 +195,7 @@ const AppointmentForm = () => {
               </label>
 
               <label className="slot" htmlFor="slot_2">
-                <input type="radio" value="12:00 PM-03:00 PM" name="formSlot" id="slot_2" checked={values.formSlot === "12:00 PM-03:00 PM"} onChange={handleChange} />
+                <input type="radio" value="slot2" name="formSlot" id="slot_2" checked={values.formSlot === "slot2"} onChange={handleChange} />
                 <div className="slot-content">
                   <div className="slot-details">
                     <span>12:00 PM</span>
@@ -187,7 +205,7 @@ const AppointmentForm = () => {
               </label>
 
               <label className="slot" htmlFor="slot_3">
-                <input type="radio" value="03:00 PM-06:00 PM" name="formSlot" id="slot_3" checked={values.formSlot === "03:00 PM-06:00 PM"} onChange={handleChange} />
+                <input type="radio" value="slot3" name="formSlot" id="slot_3" checked={values.formSlot === "slot3"} onChange={handleChange} />
                 <div className="slot-content">
                   <div className="slot-details">
                     <span>03:00 PM</span>
@@ -197,7 +215,7 @@ const AppointmentForm = () => {
               </label>
 
               <label className="slot" htmlFor="slot_4">
-                <input type="radio" value="06:00 PM-09:00 PM" name="formSlot" id="slot_4" checked={values.formSlot === "06:00 PM-09:00 PM"} onChange={handleChange} />
+                <input type="radio" value="slot4" name="formSlot" id="slot_4" checked={values.formSlot === "slot4"} onChange={handleChange} />
                 <div className="slot-content">
                   <div className="slot-details">
                     <span>06:00 PM</span>
@@ -230,17 +248,22 @@ const AppointmentForm = () => {
         </Row>
       </Form.Group>
 
-      <button type="submit" className="primary-button button-lg" >Book appointment</button>
-
-      {/* This modal will show up on error or otp send */}
+      <button type="submit" className="primary-button button-lg" disabled={bookingAppointment}>
+        { 
+        bookingAppointment ? 
+        <Spinner
+          as="span"
+          animation="grow"
+          size="sm"
+          role="status"
+          aria-hidden="true"
+        />: 'Book Appointment'}
+      </button>
       <VerticalCenteredModalComponent
         data={modalData}
         show={modalShow}
         onHide={() => setModalShow(false)}
       />
-      {/* <div className="d-flex justify-content-center pt-3 bottom-link">
-        <Link to="/register">Create an account !</Link>
-      </div> */}
     </Form>
     </>
   );
