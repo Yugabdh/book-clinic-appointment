@@ -10,13 +10,15 @@ export const getUserData = createAsyncThunk('user/getUserData', async (obj, { di
   if(userSnapshot.exists()) {
     return {userData:{...userSnapshot.data()}} 
   } else {
-    await setDoc(doc(db, "users", userSlice.uid), {
-      firstName: "",
-      lastName: "",
-      fullName: "",
-      age: 18,
-      gender: ""
-    });
+    if (userSlice.uid) {
+      await setDoc(doc(db, "users", userSlice.uid), {
+        firstName: "",
+        lastName: "",
+        fullName: "",
+        age: 18,
+        gender: ""
+      });
+    }
   }
   return {userData:{ firstName: "", lastName: "", fullName: "", age: 18, gender: "" }};
 });
@@ -41,7 +43,11 @@ export const userSlice = createSlice({
     status: null,
     uid: null,
     userData: {
-      fullName: ''
+      fullName: '',
+      lastName: '',
+      fullName: '',
+      age: 18,
+      gender: ''
     },
   },
 

@@ -26,7 +26,6 @@ const LoginForm = () => {
   });
 
   // States handeling OTP
-  const [OTPFlag, setOTPFlag] = useState(false);
   const [recaptchaRequest, setRecaptchaRequest] = useState(false);
   const [allowSignIn, setAllowSignIn] = useState(false);
 
@@ -44,7 +43,6 @@ const LoginForm = () => {
       auth
     );
     const mobileNumber = "+91"+values.formTelNumber;
-    console.log(mobileNumber);
     const appVerifier = window.recaptchaVerifier;
     signInWithPhoneNumber(auth, mobileNumber, appVerifier)
     .then((confirmationResult) => {
@@ -57,6 +55,7 @@ const LoginForm = () => {
       setAllowSignIn(true);
       setModalShow(true);
     }).catch((error) => {
+      console.error(error);
       setModalData({
         title: "Failed to send OTP",
         message: "Error occured while trying to send OTP please try again after sometime.",
@@ -67,51 +66,64 @@ const LoginForm = () => {
   }
 
   async function signInUser() {
+
+    console.log("Inside signInUser");
     try {
       setModalData({});
       await signIn(values.formPassword);
       // Navigate to dashboard
       navigate("/dashboard", { replace: true });
-    } catch {
+    } catch(error) {
+      console.error('[Code]', error.code);
+      console.error('[Message]', error.message);
+      let errorMsg = "";
+      switch (error.code) {
+        case 'auth/invalid-verification-code':
+          errorMsg = "Invalid OTP! Please try again.";
+          break;
+        default:
+          errorMsg = "Error occured while verifiying OTP please try later.";
+          console.log(error.message);
+      }
       setModalData({
         title: "Error",
-        message: "Error occured while trying to verify OTP please try again after sometime.",
+        message: errorMsg,
         classname: "error"
       });
       setModalShow(true);
-      window.recaptchaVerifier.render().then(function(widgetId) {
-        if (window.grecaptcha) {
-          window.grecaptcha.reset(widgetId);
-        }
-      })        
+      // window.recaptchaVerifier.render().then(function(widgetId) {
+      //   if (window.grecaptcha) {
+      //     window.grecaptcha.reset(widgetId);
+      //   }
+      // })
     }
   }
 
   function validate(values, recaptchaRequest) {
+    console.log("inside validate")
     let errors = {};
-    if (!OTPFlag) {
-      if (recaptchaRequest === true) {
-        if (!values.formPassword) {
-          errors.formPassword = "OTP required.";
-        } else if (values.formPassword.length !== 6) {
-          errors.formPassword = "OTP must be 6 characters.";
-        } else {
-          setErrors({});
-
-          signInUser();
-          setOTPFlag(true);
-        }
+    if (recaptchaRequest === true) {
+      if (!values.formPassword) {
+        errors.formPassword = "OTP required.";
+      } else if (values.formPassword.length !== 6) {
+        errors.formPassword = "OTP must be 6 characters.";
       } else {
-        if (!values.formTelNumber) {
-          errors.formTelNumber = "Please enter contact number.";
-        } else if (!/^[0-9]{10}$/.test(values.formTelNumber)) {
-          console.log(values.formTelNumber);
-          errors.formTelNumber = "Mobile Number must have 10 digits.";
-        } else {
-          setErrors({});
-          generateRecaptcha();
-          setRecaptchaRequest(true);
-        }
+        setErrors({});
+        console.log("Calling signInUser");
+
+        signInUser();
+      }
+    } else {
+      if (!values.formTelNumber) {
+        errors.formTelNumber = "Please enter contact number.";
+      } else if (!/^[0-9]{10}$/.test(values.formTelNumber)) {
+        console.log(values.formTelNumber);
+        errors.formTelNumber = "Mobile Number must have 10 digits.";
+      } else {
+        setErrors({});
+        console.log("Calling generateRecaptcha");
+        generateRecaptcha();
+        setRecaptchaRequest(true);
       }
     }
     return errors;
