@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
-import Appointments from '../AppointmentPage/Appointments';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
@@ -12,6 +11,7 @@ import { SET_UID, getUserData } from '../../redux/userSlice';
 
 import { useAuth } from '../../contexts/AuthContext';
 
+import AppointmentWrapper from './AppointmentWrapper';
 import ProfileComponent from '../../components/ProfileComponent';
 import CardComponentWithHeading from '../../components/CardComponentWithHeading';
 
@@ -29,7 +29,7 @@ const DashboardPage = () => {
     dispatch(SET_UID(currentUser.uid));
     // get User Data
     dispatch(getUserData());
-  }, [dispatch, currentUser.uid]);
+  }, [currentUser.uid]);
 
   const userSlice = useSelector((state) => state.userSlice);
 
@@ -50,7 +50,7 @@ const DashboardPage = () => {
                 </div>
               </>
             }
-            children={<Appointments />}
+            children={<AppointmentWrapper />}
           />
           </Col>
         </Row>

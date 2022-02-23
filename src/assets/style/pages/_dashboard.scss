@@ -1,5 +1,10 @@
 @use '../base' as base;
 
+@mixin placeholder-on-focus {
+  color: black;
+  opacity: 0.8
+}
+
 .dashboard-section {
   min-height: 100vh;
   padding-top: 140px;
@@ -52,6 +57,76 @@
         margin-left: auto;
         margin-right: auto;
         text-decoration: none;
+      }
+    }
+  }
+
+  .card-heading-wrapper {
+    .filter-form {
+      .row {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+
+    form {
+      .filter-group {
+        display: grid;
+        grid-template-columns: auto 3fr 1fr;
+	      grid-template-rows: 1fr;
+        grid-template-areas: "box1 box2 box3";
+
+      }
+
+      .form-label {
+        grid-area: box1;
+        padding-right: 1em;
+      }
+
+      .react-datepicker-wrapper {
+        grid-area: box2;
+      }
+      .react-datepicker-ignore-onclickoutside {
+        &:focus {
+          border: 1px solid base.$primary-2!important;
+          box-shadow: none;
+          &::-webkit-input-placeholder {
+            color: black;
+            opacity: 1
+          }
+          &::-moz-placeholder {
+            @include placeholder-on-focus
+          }
+          &:-ms-input-placeholder {
+            color: black;
+            opacity: 1
+          }
+          &:-o-input-placeholder {
+            color: black;
+            opacity: 1
+          }
+        }
+      }
+
+      .button-wrapper {
+        grid-area: box3;
+        display: flex;
+
+        .primary-button {
+          margin-left: auto;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+        }
+      }
+
+      @media screen and (max-width: 540px) {
+        .filter-group {
+	        grid-template-rows: 1fr 1fr;
+          grid-template-columns: 2fr 1fr;
+          grid-template-areas: "box1 box1"
+                               "box2 box3";
+        }
       }
     }
   }

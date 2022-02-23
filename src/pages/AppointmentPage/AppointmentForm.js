@@ -22,7 +22,7 @@ const AppointmentForm = () => {
 
   const userSlice = useSelector((state) => state.userSlice);
 
-  const converDate = (date) => {
+  const convertDate = (date) => {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
       day = '' + d.getDate(),
@@ -136,7 +136,7 @@ const AppointmentForm = () => {
   };
 
   const handleChangeDate = (date) => {
-    const dateInFormate = converDate(date);
+    const dateInFormate = convertDate(date);
     setValues(values => ({ ...values, 'formAppointmentDate': dateInFormate}))
     setFormDate(date);
   }
