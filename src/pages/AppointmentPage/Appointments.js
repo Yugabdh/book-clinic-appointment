@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import React, { useState, useEffect } from 'react';
+import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from '../../firebase';
 
 import { useAuth } from '../../contexts/AuthContext';
@@ -24,10 +24,10 @@ const Appointments = ({ formDate }) => {
 
   const { currentUser } = useAuth();
   console.log('Appointments: '+convertDate(formDate));
-  const q = query(collection(db, "users/"+currentUser.uid+"/appointments/"+convertDate(formDate)+"/appointments"));
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
+    const q = query(collection(db, "users/"+currentUser.uid+"/appointments/"+convertDate(formDate)+"/appointments"), orderBy("created", "asc"));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const appointments = [];
       querySnapshot.forEach((doc) => {

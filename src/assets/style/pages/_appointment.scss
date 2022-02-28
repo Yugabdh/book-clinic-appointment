@@ -204,6 +204,11 @@
           &::after {
             content: "";
           }
+
+          &.disabled {
+            border: 2px solid black;
+            background: #9599a8;
+          }
         }
 
         .slot-details span {
@@ -273,7 +278,7 @@
           }
         }
 
-        .slot input[type="radio"]:checked + .slot-content:after {
+        .slot input[type="radio"]:checked + .slot-content::after {
           top: 45%;
           -webkit-transform: translate(-50%);
           -ms-transform: translate(-50%);
@@ -314,7 +319,7 @@
         }
       }
 
-      .slots .slot input[type="radio"]:checked + .slot-content:after {
+      .slots .slot input[type="radio"]:checked + .slot-content::after {
         top: 20px;
         right: 10px;
       }
