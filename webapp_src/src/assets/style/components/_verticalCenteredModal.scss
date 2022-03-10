@@ -1,0 +1,20 @@
+@use '../base' as base;
+
+.vc-modal {
+
+  &.error {
+    .modal-header {
+    .modal-title {
+      color: #dc3545;
+    }
+  }
+  }
+
+  &.sucess {
+    .modal-header {
+      .modal-title {
+        color: #198754;
+      }
+    }
+  }
+}
