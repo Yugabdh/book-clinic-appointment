@@ -12,7 +12,7 @@ import logoWhite from '../../assets/img/png/tooth-white.png';
 import { useAuth } from '../../contexts/AuthContext';
 
 const NavbarComponent = () => {
-  const { currentUser, logOut } = useAuth();
+  const { currentUser, logOut, receptionist } = useAuth();
   const navigate = useNavigate();
 
   async function handleSignOut() {
@@ -54,6 +54,12 @@ const NavbarComponent = () => {
     );
   }
 
+  const NotDisplayIfAdmin = ({children}) => {
+    return (
+      !receptionist ? children: ''
+    );
+  }
+
   return (
     <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)} collapseOnSelect={true}>
       <Container>
@@ -75,7 +81,9 @@ const NavbarComponent = () => {
               </NotDisplayIfCurrentUser>
               <DisplayIfCurrentUser>
                 <Nav.Link as={NavLink} to="/dashboard" href="/dashboard">Dashboard</Nav.Link>
-                <Nav.Link as={NavLink} to="/profile" href="/profile">Profile</Nav.Link>
+                <NotDisplayIfAdmin>
+                  <Nav.Link as={NavLink} to="/profile" href="/profile">Profile</Nav.Link>
+                </NotDisplayIfAdmin>
                 <Nav.Link as={NavLink} to="/appointments" href="/appointments">Book Appointment</Nav.Link>
               </DisplayIfCurrentUser>
             </Nav>

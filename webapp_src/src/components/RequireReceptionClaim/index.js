@@ -4,11 +4,11 @@ import {
   useLocation
 } from "react-router-dom";
 
-export default function RequireAuth({ children }) {
-  const { currentUser } = useAuth();
+export default function RequireReceptionClaim({ children }) {
+  const { currentUser, receptionist } = useAuth();
   let location = useLocation();
 
-  if (!currentUser) {
+  if (!currentUser && !receptionist) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience

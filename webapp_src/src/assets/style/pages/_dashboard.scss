@@ -77,16 +77,27 @@
 	      grid-template-rows: 1fr;
         grid-template-areas: "box1 box2 box3";
 
+        .form-label {
+          grid-area: box1;
+          padding-right: 1em;
+        }
+
+        .react-datepicker-wrapper {
+          grid-area: box2;
+        }
+
+        .button-wrapper {
+          grid-area: box3;
+          display: flex;
+
+          .primary-button {
+            margin-left: auto;
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+          }
+        }
       }
 
-      .form-label {
-        grid-area: box1;
-        padding-right: 1em;
-      }
-
-      .react-datepicker-wrapper {
-        grid-area: box2;
-      }
       .react-datepicker-ignore-onclickoutside {
         &:focus {
           border: 1px solid base.$primary-2!important;
@@ -109,15 +120,16 @@
         }
       }
 
-      .button-wrapper {
-        grid-area: box3;
-        display: flex;
-
-        .primary-button {
-          margin-left: auto;
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
+      .filter-group-admin {
+        display: grid;
+        grid-template-columns: 2fr 2fr;
+	      grid-template-rows: 1fr;
+        grid-template-areas: "box1 box2";
+        
+        .react-datepicker-wrapper {
+          grid-area: box1;
         }
+
       }
 
       @media screen and (max-width: 540px) {

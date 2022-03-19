@@ -1,0 +1,48 @@
+@use '../base' as base;
+
+@mixin placeholder-on-focus {
+  color: black;
+  opacity: 0.8
+}
+
+.dashboard-section {
+  .card-heading-wrapper {
+    .admin-filter-wrapper {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: 1fr;
+      grid-template-areas: "box1 box2";
+
+      .filter-form-admin {
+        grid-area: box1;
+        padding-right: 1em;
+      }
+
+      .btn-group {
+        grid-area: box2;
+        height: 38px;
+      }
+
+      .button-wrapper {
+        .primary-button {
+          margin-left: 24px!important;
+        }
+      }
+    }
+
+    @include base.respond-to(medium) {
+      .admin-filter-wrapper {
+        grid-template-rows: 1fr 1fr;
+        grid-template-columns: 1fr;
+        grid-template-areas: "box1 box1"
+                             "box2 box2";
+
+        .button-wrapper {
+          .primary-button {
+            margin-left: auto!important;
+          }
+        }
+      }
+    }
+  }
+}
