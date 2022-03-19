@@ -15,20 +15,26 @@ class MakeChangesInUser(tk.Frame):
             self.data = self.parent.get_store()
             self.phoneNumber_label = tk.Label(self,
                                               text="Phone number: " + self.data["phoneNumber"], font=("Lato", 14))
-            self.phoneNumber_label.grid(row=0, column=0, sticky=tk.W, padx=10, pady=0)
-            self.uid_label = tk.Label(self, text="UID: " + self.data["user"].uid, font=("Lato", 14))
+            self.phoneNumber_label.grid(
+                row=0, column=0, sticky=tk.W, padx=10, pady=0)
+            self.uid_label = tk.Label(
+                self, text="UID: " + self.data["user"].uid, font=("Lato", 14))
             self.uid_label.grid(row=1, column=0, sticky=tk.W, padx=10, pady=0)
 
             claims = (("Receptionist", "receptionist"), ("Doctor", "doctor"),
                       ("Remove all (Removes any or all claims)", "remove"))
 
-            self.claim_label = tk.Label(self, text="What role you want to allot to above user?", font=("Lato", 14))
-            self.claim_label.grid(row=2, column=0, sticky=tk.W, padx=10, pady=15)
+            self.claim_label = tk.Label(
+                self, text="What role you want to allot to above user?", font=("Lato", 14))
+            self.claim_label.grid(
+                row=2, column=0, sticky=tk.W, padx=10, pady=15)
 
             self.current_status = tk.StringVar()
             self.current_claims()
-            self.claim_label = tk.Label(self, textvariable=self.current_status, font=("Lato", 8))
-            self.claim_label.grid(row=3, column=0, sticky=tk.W, padx=10, pady=15)
+            self.claim_label = tk.Label(
+                self, textvariable=self.current_status, font=("Lato", 8))
+            self.claim_label.grid(
+                row=3, column=0, sticky=tk.W, padx=10, pady=15)
 
             # radio buttons
             self.custom_claim = tk.StringVar()
@@ -42,10 +48,14 @@ class MakeChangesInUser(tk.Frame):
                 )
                 r.grid(row=4+index, column=0, sticky=tk.W, padx=10, pady=5)
 
-            self.get_user_btn = tk.Button(self, text="Update user", bg="#007bff", command=self.update_user)
-            self.get_user_btn.grid(row=7, column=0, sticky=tk.W, padx=15, pady=10)
-            self.get_user_btn = tk.Button(self, text="Back", bg="#007bff", command=self.back_to_main)
-            self.get_user_btn.grid(row=7, column=1, sticky=tk.W, padx=15, pady=10)
+            self.get_user_btn = tk.Button(
+                self, text="Update user", bg="#007bff", command=self.update_user)
+            self.get_user_btn.grid(
+                row=7, column=0, sticky=tk.W, padx=15, pady=10)
+            self.get_user_btn = tk.Button(
+                self, text="Back", bg="#007bff", command=self.back_to_main)
+            self.get_user_btn.grid(
+                row=7, column=1, sticky=tk.W, padx=15, pady=10)
 
     def back_to_main(self):
         from check_user import CheckUser
@@ -57,8 +67,8 @@ class MakeChangesInUser(tk.Frame):
         receptionist = self.data["user"].custom_claims.get("receptionist")
         doctor = self.data["user"].custom_claims.get("doctor")
         if doctor:
-            return self.current_status.set("User profile level: Doctor")
-        if receptionist:
+            self.current_status.set("User profile level: Doctor")
+        elif receptionist:
             self.current_status.set("User profile level: Receptionist")
         else:
             self.current_status.set("User profile level: None")
@@ -81,10 +91,11 @@ class MakeChangesInUser(tk.Frame):
         else:
             showerror(title="Error", message="Invalid phone number.")
 
-    def set_custom_claims(self, val:str):
+    def set_custom_claims(self, val: str):
         # Set admin privilege on the user corresponding to uid.
         if val == "remove":
-            auth.set_custom_user_claims(self.data["user"].uid, {"receptionist": False, "doctor": False})
+            auth.set_custom_user_claims(self.data["user"].uid, {
+                                        "receptionist": False, "doctor": False})
             # Lookup the user associated with the specified uid.
             user = auth.get_user(self.data["user"].uid)
             if not user.custom_claims.get("receptionist") and not user.custom_claims.get("doctor"):
@@ -97,10 +108,9 @@ class MakeChangesInUser(tk.Frame):
             user = auth.get_user(self.data["user"].uid)
             # The claims can be accessed on the user record.
             if user.custom_claims.get(val):
-                showinfo("Success" , "User is now "+val)
+                showinfo("Success", "User is now "+val)
             else:
                 showerror("Error", "User update failed")
 
         self.data["user"] = user
         self.current_claims()
-
