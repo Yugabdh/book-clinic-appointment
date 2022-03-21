@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 import { db } from '../../firebase';
-import { addDoc, setDoc, collection, serverTimestamp, onSnapshot, query, doc } from "firebase/firestore";
+import { addDoc, setDoc, collection, serverTimestamp, getDocs, onSnapshot, query, where, doc } from "firebase/firestore";
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from 'react-datepicker';
 
@@ -12,13 +12,28 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
+import AutofillAnswerModalComponent from '../../components/AutofillAnswerModalComponent/';
 
 const AppointmentForm = () => {
   const navigate = useNavigate();
+
+  // Form inputs
+  const [values, setValues] = useState({
+    phoneNumber: '',
+    formAppointmentName: '',
+    formPatientName: '',
+    formAppointmentDate: '',
+    formSymptoms: '',
+    formSlot: null
+  });
+
   // Modal states
   const [modalData, setModalData] = useState({});
   const [modalShow, setModalShow] = useState(false);
+  const [modalShowAction, setModalShowAction] = useState(false);
+
   const [bookingAppointment, setBookingAppointment] = useState(false);
+
   const [slotdata, setSlotData] = useState({
     slot1_counter: 0,
     slot2_counter: 0,
@@ -29,22 +44,58 @@ const AppointmentForm = () => {
   // contact number search States
   const [isSearching, setIsSearching] = useState(false);
   const [searchFinished, setSearchFinished] = useState(false);
+  const [savingAppointmentForUser, setSavingAppointmentForUser] = useState(false);
+
+  // if user found stores user data
+  const [patientdata, setPatientdata] = useState(null);
+
+  // Handle modal onSubmit
+  const handleSubmitModal = () => {
+    if (patientdata) {
+      setSavingAppointmentForUser(true);
+      setSearchFinished(true);
+      console.log(patientdata.fullName);
+      setValues(values => ({ ...values, formPatientName:  patientdata.fullName, formAppointmentName: 'Appointment set by receptionist'}));
+      console.log(values)
+    }
+  }
 
   // contact search function
-  const searchNumber = () => {
-    if(values.phoneNumber) {
-      let phoneNumber = values.phoneNumber;
-      if (!values.formTelNumber) {
-        errors.formTelNumber = "Please enter contact number.";
-      } else if (!/^[0-9]{10}$/.test(values.formTelNumber)) {
-        console.log(values.formTelNumber);
-        errors.formTelNumber = "Mobile Number must have 10 digits.";
+  const searchNumber = async () => {
+    setSearchFinished(false);
+    setIsSearching(true);
+    let phoneNumber = values.phoneNumber;
+    if(phoneNumber) {
+      if (!phoneNumber) {
+        errors.phoneNumber = "Please enter contact number.";
+      } else if (!/^[0-9]{10}$/.test(phoneNumber)) {
+        errors.phoneNumber = "Mobile Number must have 10 digits.";
       } else {
         setErrors({});
-        console.log("Calling generateRecaptcha");
+        phoneNumber = "+91" + phoneNumber;
+        const userRef = collection(db, "users");
+        const q = query(userRef, where("phoneNumber", "==", phoneNumber));
+        const querySnapshot = await getDocs(q);
+        console.log(querySnapshot.size);
+        if (querySnapshot.size === 1) {
+          querySnapshot.forEach((doc) => {
+            setModalData({
+              title: "User found",
+              message: "User found associated with " + phoneNumber + ". With user name " + doc.data().fullName + ". Do you want to continue with this user?",
+              classname: "sucess"
+            });
+            setModalShowAction(true);
+            setPatientdata({...doc.data(), uid: doc.id})
+          });
+        } else {
+          savingAppointmentForUser(false);
+          setIsSearching(false);
+          setSearchFinished(true);
+        }
       }
     }
-  } 
+    setIsSearching(false);
+  }
   
   const [slotStatusFlag, setSlotStatusFlag] = useState({ slot1: false, slot2: false, slot3: false, slot4: false});
 
@@ -65,14 +116,6 @@ const AppointmentForm = () => {
     const dateInFormate = [day, month, year].join('-');
     return dateInFormate;
   }
-  // Form inputs
-  const [values, setValues] = useState({
-    phoneNumber: '',
-    formPatientName: '',
-    formAppointmentDate: '',
-    formSymptoms: '',
-    formSlot: null
-  });
 
   // weekday checker
   const isWeekday = (date) => {
@@ -93,6 +136,7 @@ const AppointmentForm = () => {
       "slot3": "03:00 PM-06:00 PM",
       "slot4": "06:00 PM-09:00 PM",
     }
+
     if (!(slotdata[values.formSlot+"_counter"] >= 4)) {
       slotdata[values.formSlot+"_counter"] += 1;
       const slotcounterRef = doc(db, "appointments", values.formAppointmentDate);
@@ -102,29 +146,67 @@ const AppointmentForm = () => {
       }).then(
         (slotupdateRef) => {
           const serverTS = serverTimestamp();
-          addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
-            uname: values.formPatientName,
-            unumber: values.phoneNumber,
-            appointmentId: '',
-            symtoms: values.formSymptoms,
-            status: 'pending',
-            created: serverTS
-          }).then((appointmentRef) => {
-            setModalData({
-              title: "Appointment booked",
-              message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
-              classname: "sucess"
+          if (savingAppointmentForUser) {
+            addDoc(collection(db, "users/"+patientdata.uid+"/appointments/"+values.formAppointmentDate, "appointments"), {
+              appointmentName: values.formAppointmentName,
+              date: values.formAppointmentDate,
+              slot: values.formSlot,
+              symtoms: values.formSymptoms,
+              status: 'pending',
+              created: serverTS
+            }).then((ref) => {
+              addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
+                uid: patientdata.uid,
+                uname: patientdata.fullName,
+                unumber: "+91"+values.phoneNumber,
+                appointmentId: ref.id,
+                appointmentName: values.formAppointmentName,
+                symtoms: values.formSymptoms,
+                status: 'pending',
+                created: serverTS
+              }).then((appointmentRef) => {
+                setModalData({
+                  title: "Appointment booked",
+                  message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
+                  classname: "sucess"
+                });
+                setModalShow(true);
+                setBookingAppointment(false);
+                setValues({
+                  formAppointmentName: '',
+                  formAppointmentDate: '',
+                  formSymptoms: '',
+                  formSlot: null
+                });
+                setFormDate();
+              })
             });
-            setModalShow(true);
-            setBookingAppointment(false);
-            setValues({
-              formAppointmentName: '',
-              formAppointmentDate: '',
-              formSymptoms: '',
-              formSlot: null
-            });
-            setFormDate();
-          })
+          } else {
+            addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
+              uname: patientdata.fullName,
+              unumber: "+91"+values.phoneNumber,
+              appointmentId: '',
+              appointmentName: values.formAppointmentName,
+              symtoms: values.formSymptoms,
+              status: 'pending',
+              created: serverTS
+            }).then((appointmentRef) => {
+              setModalData({
+                title: "Appointment booked",
+                message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
+                classname: "sucess"
+              });
+              setModalShow(true);
+              setBookingAppointment(false);
+              setValues({
+                formAppointmentName: '',
+                formAppointmentDate: '',
+                formSymptoms: '',
+                formSlot: null
+              });
+              setFormDate();
+            })
+          }
         }
       )
     }
@@ -233,128 +315,143 @@ const AppointmentForm = () => {
             }
           </Col>
           <Col md={12} lg={2}>
-            <button type="button" onClick={ searchNumber } className="primary-button search-btn">
-              Search
-            </button>
+          <button type="button" onClick={ searchNumber } className="primary-button search-btn" disabled={ isSearching }>
+            { 
+              isSearching ?
+              <Spinner
+                as="span"
+                animation="grow"
+                size="sm"
+                role="status"
+                aria-hidden="true"
+              />: 'Search'
+            }
+          </button>
           </Col>
         </Row>
       </Form.Group>
-      <Form.Group className="mb-3">
-        <Row>
-          <Col md={12} lg={6}>
-            <Form.Label>Patient name</Form.Label>
-            <Form.Control
-              autoComplete="off"
-              type="text"
-              placeholder="Enter patient name"
-              name="formPatientName"
-              onChange={handleChange}
-              value={values.formPatientName || ''}
-              className={`${errors.formPatientName && 'wrong-input'}`}
-              required
-            />
-            {
-            errors.formPatientName && (<Form.Text className="text-danger">{errors.formPatientName}</Form.Text>)
-            }
-          </Col>
-          <Col md={12} lg={6}>
-            <Form.Label>Appointment date</Form.Label>
-            <DatePicker
-              name="formAppointmentDate"
-              selected={formDate}
-              placeholderText="Select appointment day"
-              onChange={date => handleChangeDate(date)}
-              dateFormat='dd-MM-yyyy'
-              minDate={new Date()}
-              maxDate={new Date().setDate(new Date().getDate() + 5)}
-              className={`form-control ${errors.formAppointmentDate && 'wrong-input'}`}
-              filterDate={isWeekday}
-              autoComplete="off"
-            />
-            {
-            errors.formAppointmentDate && (<Form.Text className="text-danger">{errors.formAppointmentDate}</Form.Text>)
-            }
-            
-          </Col>
+      {
+        searchFinished && !isSearching?
+        <>
+        <Form.Group className="mb-3">
+          <Row>
+            <Col md={12} lg={6}>
+              <Form.Label>Patient name</Form.Label>
+              <Form.Control
+                autoComplete="off"
+                type="text"
+                placeholder="Enter patient name"
+                name="formPatientName"
+                onChange={handleChange}
+                value={values.formPatientName || ''}
+                className={`${errors.formPatientName && 'wrong-input'}`}
+                required
+                disabled={savingAppointmentForUser}
+              />
+              {
+              errors.formPatientName && (<Form.Text className="text-danger">{errors.formPatientName}</Form.Text>)
+              }
+            </Col>
+            <Col md={12} lg={6}>
+              <Form.Label>Appointment date</Form.Label>
+              <DatePicker
+                name="formAppointmentDate"
+                selected={formDate}
+                placeholderText="Select appointment day"
+                onChange={date => handleChangeDate(date)}
+                dateFormat='dd-MM-yyyy'
+                minDate={new Date()}
+                maxDate={new Date().setDate(new Date().getDate() + 5)}
+                className={`form-control ${errors.formAppointmentDate && 'wrong-input'}`}
+                filterDate={isWeekday}
+                autoComplete="off"
+              />
+              {
+              errors.formAppointmentDate && (<Form.Text className="text-danger">{errors.formAppointmentDate}</Form.Text>)
+              }
+              
+            </Col>
 
-          <Col md={12} lg={12}>
-            <div className="slots">
-              <div className="title">Choose a apoointment slot</div>
-              <label className="slot" htmlFor="slot_1">
-                <input type="radio" value="slot1" name="formSlot" id="slot_1" checked={values.formSlot === "slot1"} onChange={handleChange} disabled={slotStatusFlag.slot1}/>
-                <div className={`slot-content ${slotStatusFlag.slot1 ? "disabled" : ""}`}>
-                  <div className="slot-details">
-                    <span>09:00 AM</span>
-                    <p>09:00 AM-12:00 PM</p>
+            <Col md={12} lg={12}>
+              <div className="slots">
+                <div className="title">Choose a apoointment slot</div>
+                <label className="slot" htmlFor="slot_1">
+                  <input type="radio" value="slot1" name="formSlot" id="slot_1" checked={values.formSlot === "slot1"} onChange={handleChange} disabled={slotStatusFlag.slot1}/>
+                  <div className={`slot-content ${slotStatusFlag.slot1 ? "disabled" : ""}`}>
+                    <div className="slot-details">
+                      <span>09:00 AM</span>
+                      <p>09:00 AM-12:00 PM</p>
+                    </div>
                   </div>
-                </div>
-              </label>
+                </label>
 
-              <label className="slot" htmlFor="slot_2">
-                <input type="radio" value="slot2" name="formSlot" id="slot_2" checked={values.formSlot === "slot2"} onChange={handleChange} disabled={slotStatusFlag.slot2}/>
-                <div className={`slot-content ${slotStatusFlag.slot2 ? "disabled" : ""}`}>
-                  <div className="slot-details">
-                    <span>12:00 PM</span>
-                    <p>12:00 PM-03:00 PM</p>
+                <label className="slot" htmlFor="slot_2">
+                  <input type="radio" value="slot2" name="formSlot" id="slot_2" checked={values.formSlot === "slot2"} onChange={handleChange} disabled={slotStatusFlag.slot2}/>
+                  <div className={`slot-content ${slotStatusFlag.slot2 ? "disabled" : ""}`}>
+                    <div className="slot-details">
+                      <span>12:00 PM</span>
+                      <p>12:00 PM-03:00 PM</p>
+                    </div>
                   </div>
-                </div>
-              </label>
+                </label>
 
-              <label className="slot" htmlFor="slot_3">
-                <input type="radio" value="slot3" name="formSlot" id="slot_3" checked={values.formSlot === "slot3"} onChange={handleChange} disabled={slotStatusFlag.slot3}/>
-                <div className={`slot-content ${slotStatusFlag.slot3 ? "disabled" : ""}`}>
-                  <div className="slot-details">
-                    <span>03:00 PM</span>
-                    <p>03:00 PM-06:00 PM</p>
+                <label className="slot" htmlFor="slot_3">
+                  <input type="radio" value="slot3" name="formSlot" id="slot_3" checked={values.formSlot === "slot3"} onChange={handleChange} disabled={slotStatusFlag.slot3}/>
+                  <div className={`slot-content ${slotStatusFlag.slot3 ? "disabled" : ""}`}>
+                    <div className="slot-details">
+                      <span>03:00 PM</span>
+                      <p>03:00 PM-06:00 PM</p>
+                    </div>
                   </div>
-                </div>
-              </label>
+                </label>
 
-              <label className="slot" htmlFor="slot_4">
-                <input type="radio" value="slot4" name="formSlot" id="slot_4" checked={values.formSlot === "slot4"} onChange={handleChange} disabled={slotStatusFlag.slot4}/>
-                <div className={`slot-content ${slotStatusFlag.slot4 ? "disabled" : ""}`}>
-                  <div className="slot-details">
-                    <span>06:00 PM</span>
-                    <p>06:00 PM-09:00 PM</p>
+                <label className="slot" htmlFor="slot_4">
+                  <input type="radio" value="slot4" name="formSlot" id="slot_4" checked={values.formSlot === "slot4"} onChange={handleChange} disabled={slotStatusFlag.slot4}/>
+                  <div className={`slot-content ${slotStatusFlag.slot4 ? "disabled" : ""}`}>
+                    <div className="slot-details">
+                      <span>06:00 PM</span>
+                      <p>06:00 PM-09:00 PM</p>
+                    </div>
                   </div>
-                </div>
-              </label>
-            </div>
-            {
-            errors.formSlot && (<Form.Text className="text-danger">{errors.formSlot}</Form.Text>)
-            }
-          </Col>
+                </label>
+              </div>
+              {
+              errors.formSlot && (<Form.Text className="text-danger">{errors.formSlot}</Form.Text>)
+              }
+            </Col>
 
-          <Col md={12} lg={12}>
-            <Form.Label>Symptoms</Form.Label>
-            <Form.Control
-              as="textarea" rows={3}
-              autoComplete="off"
-              name="formSymptoms"
-              onChange={handleChange}
-              value={values.formSymptoms || ''}
-              className={`${errors.formSymptoms && 'wrong-input'}`}
-              required
-            />
-            {
-            errors.formSymptoms && (<Form.Text className="text-danger">{errors.formSymptoms}</Form.Text>)
-            }
-            
-          </Col>
-        </Row>
-      </Form.Group>
+            <Col md={12} lg={12}>
+              <Form.Label>Symptoms</Form.Label>
+              <Form.Control
+                as="textarea" rows={3}
+                autoComplete="off"
+                name="formSymptoms"
+                onChange={handleChange}
+                value={values.formSymptoms || ''}
+                className={`${errors.formSymptoms && 'wrong-input'}`}
+                required
+              />
+              {
+              errors.formSymptoms && (<Form.Text className="text-danger">{errors.formSymptoms}</Form.Text>)
+              }
+              
+            </Col>
+          </Row>
+        </Form.Group>
 
-      <button type="submit" className="primary-button button-lg" disabled={bookingAppointment}>
-        { 
-        bookingAppointment ? 
-        <Spinner
-          as="span"
-          animation="grow"
-          size="sm"
-          role="status"
-          aria-hidden="true"
-        />: 'Book Appointment'}
-      </button>
+        <button type="submit" className="primary-button button-lg" disabled={bookingAppointment}>
+          { 
+          bookingAppointment ? 
+          <Spinner
+            as="span"
+            animation="grow"
+            size="sm"
+            role="status"
+            aria-hidden="true"
+          />: 'Book Appointment'}
+        </button>
+      </>: ""
+      }
       <VerticalCenteredModalComponent
         data={modalData}
         show={modalShow}
@@ -364,6 +461,18 @@ const AppointmentForm = () => {
             navigate("/dashboard", { replace: true });
           }
         }
+      />
+      <AutofillAnswerModalComponent
+        data={modalData}
+        show={modalShowAction}
+        onHide={
+          () => {
+            setModalShowAction(false);
+            setPatientdata(null);
+          }
+        }
+        handleClose={setModalShowAction}
+        handleSubmit={handleSubmitModal}
       />
     </Form>
     </>
