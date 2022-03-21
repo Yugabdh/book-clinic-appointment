@@ -7,6 +7,9 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { makeVisible } from '../../redux/navbarTransparent';
+import { SET_UID, getUserData } from '../../redux/userSlice';
+
+import { useAuth } from '../../contexts/AuthContext';
 
 import AppointmentWrapper from './AppointmentWrapper';
 import CardComponentWithHeading from '../../components/CardComponentWithHeading';
@@ -18,6 +21,14 @@ const ReceptionistDashboard = () => {
   useEffect(() => {
     dispatch(makeVisible());
   }, [dispatch]);
+
+  const { currentUser } = useAuth();
+  useEffect(() => {
+    // Set UID
+    dispatch(SET_UID(currentUser.uid));
+    // get User Data
+    dispatch(getUserData(currentUser));
+  }, [currentUser.uid]);
 
   return (
     <section className="dashboard-section">

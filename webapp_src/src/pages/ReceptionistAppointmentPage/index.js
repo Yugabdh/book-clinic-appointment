@@ -19,7 +19,7 @@ const ReceptionistAppointmentPage = () => {
         heading={
           <>
             <div className="d-flex justify-content-between align-items-center header">
-              <h3 className="card-heading">Book appointment</h3>
+              <h3 className="card-heading">Add appointment</h3>
             </div>
           </>
         } 

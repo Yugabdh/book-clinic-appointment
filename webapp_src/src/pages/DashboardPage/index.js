@@ -28,7 +28,7 @@ const DashboardPage = () => {
     // Set UID
     dispatch(SET_UID(currentUser.uid));
     // get User Data
-    dispatch(getUserData());
+    dispatch(getUserData(currentUser));
   }, [currentUser.uid]);
 
   const userSlice = useSelector((state) => state.userSlice);

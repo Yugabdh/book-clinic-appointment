@@ -16,25 +16,26 @@ export const getUserData = createAsyncThunk('user/getUserData', async (obj, { di
         lastName: "",
         fullName: "",
         age: 18,
-        gender: ""
-      });
+        gender: "",
+        phoneNumber: obj? obj.phoneNumber: "",
+      }, { merge: true });
     }
   }
-  return {userData:{ firstName: "", lastName: "", fullName: "", age: 18, gender: "" }};
+  return {userData:{ firstName: "", lastName: "", fullName: "", age: 18, gender: "", phoneNumber: "", }};
 });
 
 // Update user data
 export const updateUserData = createAsyncThunk('user/updateUserData', async ({firstName, lastName, age, gender}, { dispatch, getState }) => {
   const {userSlice} = getState();
-  console.log(firstName);
+  console.log(userSlice);
   await setDoc(doc(db, "users", userSlice.uid), {
     firstName: firstName,
     lastName: lastName,
     fullName: firstName + " " + lastName,
     age: age,
-    gender: gender
-  });
-  return {userData:{firstName, lastName, fullName: firstName + " " + lastName, age, gender}};
+    gender: gender,
+  }, { merge: true });
+  return {userData:{firstName, lastName, fullName: firstName + " " + lastName, age, gender, phoneNumber: "", }};
 });
 
 export const userSlice = createSlice({
@@ -47,7 +48,8 @@ export const userSlice = createSlice({
       lastName: '',
       fullName: '',
       age: 18,
-      gender: ''
+      gender: '',
+      phoneNumber: '',
     },
   },
 

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup'
+import InputGroup from 'react-bootstrap/InputGroup';
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
 import { useNavigate } from "react-router-dom";
 

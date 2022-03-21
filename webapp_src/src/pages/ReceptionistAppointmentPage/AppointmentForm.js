@@ -9,14 +9,12 @@ import DatePicker from 'react-datepicker';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
 
-import { useAuth } from '../../contexts/AuthContext';
-
 const AppointmentForm = () => {
   const navigate = useNavigate();
-  const { currentUser } = useAuth();
   // Modal states
   const [modalData, setModalData] = useState({});
   const [modalShow, setModalShow] = useState(false);
@@ -27,6 +25,27 @@ const AppointmentForm = () => {
     slot3_counter: 0,
     slot4_counter: 0
   });
+
+  // contact number search States
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchFinished, setSearchFinished] = useState(false);
+
+  // contact search function
+  const searchNumber = () => {
+    if(values.phoneNumber) {
+      let phoneNumber = values.phoneNumber;
+      if (!values.formTelNumber) {
+        errors.formTelNumber = "Please enter contact number.";
+      } else if (!/^[0-9]{10}$/.test(values.formTelNumber)) {
+        console.log(values.formTelNumber);
+        errors.formTelNumber = "Mobile Number must have 10 digits.";
+      } else {
+        setErrors({});
+        console.log("Calling generateRecaptcha");
+      }
+    }
+  } 
+  
   const [slotStatusFlag, setSlotStatusFlag] = useState({ slot1: false, slot2: false, slot3: false, slot4: false});
 
   const [formDate, setFormDate] = useState();
@@ -48,7 +67,8 @@ const AppointmentForm = () => {
   }
   // Form inputs
   const [values, setValues] = useState({
-    formAppointmentName: '',
+    phoneNumber: '',
+    formPatientName: '',
     formAppointmentDate: '',
     formSymptoms: '',
     formSlot: null
@@ -73,59 +93,40 @@ const AppointmentForm = () => {
       "slot3": "03:00 PM-06:00 PM",
       "slot4": "06:00 PM-09:00 PM",
     }
-
-    if (userSlice.uid) {
-      if (userSlice.userData) {
-        if (userSlice.userData.fullName) {
-          console.log(slotdata);
-          if (!(slotdata[values.formSlot+"_counter"] >= 4)) {
-            slotdata[values.formSlot+"_counter"] += 1;
-            const slotcounterRef = doc(db, "appointments", values.formAppointmentDate);
-            console.log(slotdata)
-            await setDoc(slotcounterRef, {
-              ...slotdata
-            }).then(
-              (slotupdateRef) => {
-                const serverTS = serverTimestamp();
-                addDoc(collection(db, "users/"+userSlice.uid+"/appointments/"+values.formAppointmentDate, "appointments"), {
-                  appointmentName: values.formAppointmentName,
-                  date: values.formAppointmentDate,
-                  slot: values.formSlot,
-                  symtoms: values.formSymptoms,
-                  status: 'pending',
-                  created: serverTS
-                }).then((ref) => {
-                  addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
-                    uid: userSlice.uid,
-                    uname: userSlice.userData.fullName,
-                    unumber: currentUser.phoneNumber,
-                    appointmentId: ref.id,
-                    appointmentName: values.formAppointmentName,
-                    symtoms: values.formSymptoms,
-                    status: 'pending',
-                    created: serverTS
-                  }).then((appointmentRef) => {
-                    setModalData({
-                      title: "Appointment booked",
-                      message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
-                      classname: "sucess"
-                    });
-                    setModalShow(true);
-                    setBookingAppointment(false);
-                    setValues({
-                      formAppointmentName: '',
-                      formAppointmentDate: '',
-                      formSymptoms: '',
-                      formSlot: null
-                    });
-                    setFormDate();
-                  })
-                });
-              }
-            )
-          }
+    if (!(slotdata[values.formSlot+"_counter"] >= 4)) {
+      slotdata[values.formSlot+"_counter"] += 1;
+      const slotcounterRef = doc(db, "appointments", values.formAppointmentDate);
+      console.log(slotdata)
+      await setDoc(slotcounterRef, {
+        ...slotdata
+      }).then(
+        (slotupdateRef) => {
+          const serverTS = serverTimestamp();
+          addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
+            uname: values.formPatientName,
+            unumber: values.phoneNumber,
+            appointmentId: '',
+            symtoms: values.formSymptoms,
+            status: 'pending',
+            created: serverTS
+          }).then((appointmentRef) => {
+            setModalData({
+              title: "Appointment booked",
+              message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
+              classname: "sucess"
+            });
+            setModalShow(true);
+            setBookingAppointment(false);
+            setValues({
+              formAppointmentName: '',
+              formAppointmentDate: '',
+              formSymptoms: '',
+              formSlot: null
+            });
+            setFormDate();
+          })
         }
-      }
+      )
     }
   }
 
@@ -138,8 +139,8 @@ const AppointmentForm = () => {
 
   function validate(values) {
     let errors = {};
-    if (!values.formAppointmentName) {
-      errors.formAppointmentName = "Appointment name is required.";
+    if (!values.formPatientName) {
+      errors.formPatientName = "Appointment name is required.";
     }
 
     if(!values.formAppointmentDate) {
@@ -208,22 +209,52 @@ const AppointmentForm = () => {
   return (
     <>
     <Form onSubmit={ handleSubmit } noValidate>
+      <Form.Group>
+        <Form.Label>Contact Number</Form.Label>
+        <Row>
+          <Col md={12} lg={10}>
+            <InputGroup>
+              <InputGroup.Text className="country-span">+91</InputGroup.Text>
+              <Form.Control
+                autoComplete="off"
+                type="tel"
+                pattern="[0-9]{10}"
+                placeholder="Enter contact number"
+                name="phoneNumber"
+                value={values.phoneNumber || ''}
+                className={`${errors.phoneNumber && 'wrong-input'}`}
+                onChange={handleChange}
+                required
+                aria-describedby="phoneNumber"
+              />
+            </InputGroup>
+            {
+            errors.phoneNumber && (<Form.Text className="text-danger">{errors.phoneNumber}</Form.Text>)
+            }
+          </Col>
+          <Col md={12} lg={2}>
+            <button type="button" onClick={ searchNumber } className="primary-button search-btn">
+              Search
+            </button>
+          </Col>
+        </Row>
+      </Form.Group>
       <Form.Group className="mb-3">
         <Row>
           <Col md={12} lg={6}>
-            <Form.Label>Appointment name</Form.Label>
+            <Form.Label>Patient name</Form.Label>
             <Form.Control
               autoComplete="off"
               type="text"
-              placeholder="Enter appointment name"
-              name="formAppointmentName"
+              placeholder="Enter patient name"
+              name="formPatientName"
               onChange={handleChange}
-              value={values.formAppointmentName || ''}
-              className={`${errors.formAppointmentName && 'wrong-input'}`}
+              value={values.formPatientName || ''}
+              className={`${errors.formPatientName && 'wrong-input'}`}
               required
             />
             {
-            errors.formAppointmentName && (<Form.Text className="text-danger">{errors.formAppointmentName}</Form.Text>)
+            errors.formPatientName && (<Form.Text className="text-danger">{errors.formPatientName}</Form.Text>)
             }
           </Col>
           <Col md={12} lg={6}>

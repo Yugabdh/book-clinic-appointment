@@ -34,7 +34,7 @@ export  function AuthProvider({ children }) {
           } else {
             setReceptionist(false);
           }
-          // Confirm the user is an Receptionist.
+          // Confirm the user is an doctor.
           if (!!idTokenResult.claims.doctor) {
             setDoctor(true);
           } else {
