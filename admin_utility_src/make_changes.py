@@ -7,12 +7,12 @@ class MakeChangesInUser(tk.Frame):
     def __init__(self, master):
         super().__init__(master)
         self.parent = master
+        self.data = self.parent.get_store()
 
         self.grid_rowconfigure(0, weight=1)
         self.grid_columnconfigure(0, weight=1)
 
         if self.parent.get_store():
-            self.data = self.parent.get_store()
             self.phoneNumber_label = tk.Label(self,
                                               text="Phone number: " + self.data["phoneNumber"], font=("Lato", 14))
             self.phoneNumber_label.grid(
@@ -64,12 +64,19 @@ class MakeChangesInUser(tk.Frame):
         self.parent.switch_frame(CheckUser)
 
     def current_claims(self):
-        receptionist = self.data["user"].custom_claims.get("receptionist")
-        doctor = self.data["user"].custom_claims.get("doctor")
-        if doctor:
-            self.current_status.set("User profile level: Doctor")
-        elif receptionist:
-            self.current_status.set("User profile level: Receptionist")
+        # Lookup the user associated with the specified uid.
+        print(self.data['user'].uid)
+        user = auth.get_user(self.data['user'].uid)
+        if (user.custom_claims):
+            # The claims can be accessed on the user record.
+            receptionist = user.custom_claims.get("receptionist")
+            doctor = user.custom_claims.get("doctor")
+            if doctor:
+                self.current_status.set("User profile level: Doctor")
+            elif receptionist:
+                self.current_status.set("User profile level: Receptionist")
+            else:
+                self.current_status.set("User profile level: None")
         else:
             self.current_status.set("User profile level: None")
 
