@@ -26,7 +26,7 @@ const AutofillAnswerModalComponent = (props) => {
         <Button variant="primary" onClick={
             () => {
               props.handleClose(false);
-              props.handleSubmit()
+              props.handlesubmit()
             }
           } >Yes</Button>
         <Button variant="secondary" onClick={() => props.handleClose(false)}>No</Button>

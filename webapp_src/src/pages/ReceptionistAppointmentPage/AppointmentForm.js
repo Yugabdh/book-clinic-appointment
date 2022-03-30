@@ -88,7 +88,7 @@ const AppointmentForm = () => {
             setPatientdata({...doc.data(), uid: doc.id})
           });
         } else {
-          savingAppointmentForUser(false);
+          setSavingAppointmentForUser(false);
           setIsSearching(false);
           setSearchFinished(true);
         }
@@ -183,7 +183,7 @@ const AppointmentForm = () => {
             });
           } else {
             addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
-              uname: patientdata.fullName,
+              uname: values.formPatientName,
               unumber: "+91"+values.phoneNumber,
               appointmentId: '',
               appointmentName: values.formAppointmentName,
@@ -472,7 +472,7 @@ const AppointmentForm = () => {
           }
         }
         handleClose={setModalShowAction}
-        handleSubmit={handleSubmitModal}
+        handlesubmit={handleSubmitModal}
       />
     </Form>
     </>

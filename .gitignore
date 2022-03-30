@@ -229,3 +229,6 @@ dmypy.json
 
 # service key
 serviceAccountKey.json
+
+# build folder
+build/*

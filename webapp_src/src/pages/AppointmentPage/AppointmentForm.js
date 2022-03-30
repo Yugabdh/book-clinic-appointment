@@ -123,7 +123,21 @@ const AppointmentForm = () => {
                 });
               }
             )
+          } else {
+            setModalData({
+              title: "Error",
+              message: "Please choose different booking slot.",
+              classname: "error"
+            });
+            setModalShow(true);
           }
+        } else {
+          setModalData({
+            title: "Error",
+            message: "Please update your name on profile page.",
+            classname: "error"
+          });
+          setModalShow(true);
         }
       }
     }
