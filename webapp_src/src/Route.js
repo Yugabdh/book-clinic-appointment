@@ -1,39 +1,48 @@
-import { useAuth } from './contexts/AuthContext';
+import { useSelector } from 'react-redux';
+import { Routes, Route } from 'react-router-dom';
+
+import { selectUser, selectClaims } from './redux/user';
 
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import ProfilePage from './pages/ProfilePage';
 import AppointmentPage from './pages/AppointmentPage';
+import NotFoundPage from './pages/NotFoundPage';
 
-import ReceptionistDashboard from './pages/ReceptionistDashboard';
-import ReceptionistAppointmentPage from './pages/ReceptionistAppointmentPage';
+// import ReceptionistDashboard from './pages/ReceptionistDashboard';
+// import ReceptionistAppointmentPage from './pages/ReceptionistAppointmentPage';
 
 import RequireAuth from './components/RequireAuthComponent';
-import RequireReceptionClaim from './components/RequireReceptionClaim';
-import { Routes, Route } from 'react-router-dom';
+// import RequireReceptionClaim from './components/RequireReceptionClaim';
 
 
 const RoutesConfig = () => {
-  const { currentUser, receptionist } = useAuth();
+  const user = useSelector(selectUser);
+  const claims = useSelector(selectClaims);
   return(
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage />} />
-      {currentUser && !receptionist ? (
-        <>
-          <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
-          <Route path="/profile" element={ <RequireAuth><ProfilePage /></RequireAuth>} />
-          <Route path="/appointments" element={ <RequireAuth><AppointmentPage /></RequireAuth>} />
-        </>
-      ): <></>}
-
-      {currentUser && receptionist ? (
-        <>
-          <Route path="/dashboard" element={<RequireReceptionClaim><ReceptionistDashboard /></RequireReceptionClaim>} />
-          <Route path="/appointments" element={<RequireReceptionClaim><ReceptionistAppointmentPage /></RequireReceptionClaim>} />
-        </>
-      ): <></>}
+      {
+        user? 
+          claims.receptionist ? 
+            <>
+              {/* <Route path="/dashboard" element={<RequireReceptionClaim><ReceptionistDashboard /></RequireReceptionClaim>} />
+              <Route path="/appointments" element={<RequireReceptionClaim><ReceptionistAppointmentPage /></RequireReceptionClaim>} /> */}
+            </>
+          : 
+            claims.doctor? 
+              <></>
+              : 
+              <>
+                <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />
+                <Route path="/profile" element={ <RequireAuth><ProfilePage /></RequireAuth>} />
+                <Route path="/appointments" element={ <RequireAuth><AppointmentPage /></RequireAuth>} />
+              </>
+        :
+        <Route path="*" element={<NotFoundPage />} />
+      }
     </Routes>
   );
 };

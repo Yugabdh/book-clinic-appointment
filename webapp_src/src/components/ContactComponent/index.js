@@ -7,6 +7,12 @@ import Col from 'react-bootstrap/Col';
 import SectionComponent from '../SectionComponent/';
 
 const Content = () => {
+  const location = {
+    address: '1600 Amphitheatre Parkway, Mountain View, california.',
+    lat: 37.42216,
+    lng: -122.08427,
+  }
+
   return (
     <Container className="contact-wrapper">
       <Row>
@@ -21,12 +27,12 @@ const Content = () => {
           </div>
         </Col>
         <Col md={12} lg={6}>
-        <iframe
-          title="contact-address"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.129893358775!2d73.01009111479856!3d19.013997087123478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3996fe09f45%3A0x294645a8c395cf56!2sRagul%20Family%20Dental!5e0!3m2!1sen!2sin!4v1646128887067!5m2!1sen!2sin" 
-          className="google-maps-ifram"
-          loading="lazy"
-          allowFullScreen></iframe>
+          <iframe
+            title="contact-address"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3772.129893358775!2d73.01009111479856!3d19.013997087123478!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c3996fe09f45%3A0x294645a8c395cf56!2sRagul%20Family%20Dental!5e0!3m2!1sen!2sin!4v1646128887067!5m2!1sen!2sin" 
+            className="google-maps-ifram"
+            loading="lazy"
+            allowFullScreen></iframe>
         </Col>
       </Row>
     </Container>

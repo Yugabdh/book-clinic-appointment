@@ -7,9 +7,7 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { makeVisible } from '../../redux/navbarTransparent';
-import { SET_UID, getUserData } from '../../redux/userSlice';
-
-import { useAuth } from '../../contexts/AuthContext';
+import useGetUserData from '../../hooks/useGetUserData';
 
 import AppointmentWrapper from './AppointmentWrapper';
 import ProfileComponent from '../../components/ProfileComponent';
@@ -18,27 +16,19 @@ import CardComponentWithHeading from '../../components/CardComponentWithHeading'
 const DashboardPage = () => {
   const dispatch = useDispatch();
 
+  const { loading, user, } = useGetUserData();
+
   // trigger on component mount
   useEffect(() => {
     dispatch(makeVisible());
   }, [dispatch]);
-
-  const { currentUser } = useAuth();
-  useEffect(() => {
-    // Set UID
-    dispatch(SET_UID(currentUser.uid));
-    // get User Data
-    dispatch(getUserData(currentUser));
-  }, [currentUser.uid]);
-
-  const userSlice = useSelector((state) => state.userSlice);
 
   return(
     <section className="dashboard-section">
       <Container>
         <Row className="justify-content-center">
           <Col sm={12} lg={4}>
-            <ProfileComponent phoneNumber={currentUser.phoneNumber} userSlice={userSlice}/>
+            <ProfileComponent user={user} loading={loading} />
           </Col>
           <Col sm={12} lg={8} className="pt-5 pt-lg-0">
           <CardComponentWithHeading 
@@ -50,7 +40,7 @@ const DashboardPage = () => {
                 </div>
               </>
             }
-            children={<AppointmentWrapper />}
+            children={<AppointmentWrapper user={user} loading={loading} />}
           />
           </Col>
         </Row>

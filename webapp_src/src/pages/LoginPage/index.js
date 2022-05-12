@@ -1,30 +1,35 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import Container from 'react-bootstrap/Container';
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
-import Card from 'react-bootstrap/Card';
+import { useSelector } from 'react-redux';
 
-import logoColor from '../../assets/img/png/tooth-color.png';
-import { makeVisible } from '../../redux/navbarTransparent';
-import LoginForm from './LoginForm';
-import { useAuth } from '../../contexts/AuthContext';
 import {
   Navigate,
   useLocation
 } from "react-router-dom";
 
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
+import Card from 'react-bootstrap/Card';
+
+import { makeVisible } from '../../redux/navbarTransparent';
+import { selectUser } from '../../redux/user';
+
+import LoginForm from './LoginForm';
+import logoColor from '../../assets/img/png/tooth-color.png';
+
 const LoginPage = () => {
   const dispatch = useDispatch();
-  
+  let location = useLocation();
+
+  const user = useSelector(selectUser);  
   // trigger on component mount
   useEffect(() => {
     dispatch(makeVisible());
   });
-
-  const { currentUser } = useAuth();
-  let location = useLocation();
-  if (currentUser) {
+  
+  // must be after useEffect else throws error
+  if (user) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience

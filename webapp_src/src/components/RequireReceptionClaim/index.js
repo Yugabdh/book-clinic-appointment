@@ -1,14 +1,16 @@
-import { useAuth } from '../../contexts/AuthContext';
+import { useSelector } from 'react-redux';
 import {
   Navigate,
   useLocation
 } from "react-router-dom";
+import { selectUser, selectClaims } from '../../redux/user';
 
 export default function RequireReceptionClaim({ children }) {
-  const { currentUser, receptionist } = useAuth();
+  const user = useSelector(selectUser);
+  const claims = useSelector(selectClaims);
   let location = useLocation();
 
-  if (!currentUser && !receptionist) {
+  if (!user && !claims.receptionist) {
     // Redirect them to the /login page, but save the current location they were
     // trying to go to when they were redirected. This allows us to send them
     // along to that page after they login, which is a nicer user experience

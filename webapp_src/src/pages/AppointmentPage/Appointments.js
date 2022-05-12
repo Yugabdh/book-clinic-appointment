@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
-import { db } from '../../firebase';
 
-import { useAuth } from '../../contexts/AuthContext';
+import { collection, query, onSnapshot, where } from "firebase/firestore";
+import { db } from '../../firebase';
 
 import AppointmentsTableComponent from '../../components/AppointmentsTableComponent';
 
 
-const Appointments = ({ formDate }) => {
+const Appointments = ({ user, formDate }) => {
   const convertDate = (date) => {
     var d = new Date(date),
       month = '' + (d.getMonth() + 1),
@@ -21,23 +20,30 @@ const Appointments = ({ formDate }) => {
     const dateInFormate = [day, month, year].join('-');
     return dateInFormate;
   }
-
-  const { currentUser } = useAuth();
-  console.log('Appointments: '+convertDate(formDate));
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
-    const q = query(collection(db, "users/"+currentUser.uid+"/appointments/"+convertDate(formDate)+"/appointments"), orderBy("created", "asc"));
+    let date = convertDate(formDate);
+    console.log(date);
+    const q = query(collection(db, "users/"+user.uid, "appointments"), where("date", "==", date));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const appointments = [];
       querySnapshot.forEach((doc) => {
         appointments.push(doc.data());
       });
+      appointments.sort(function(a, b) {
+        var keyA = a.created.toDate(),
+          keyB = b.created.toDate();
+        // Compare the 2 dates
+        if (keyA < keyB) return -1;
+        if (keyA > keyB) return 1;
+        return 0;
+      });
       setAppointments(appointments);
       console.log("Appointments: ", appointments);
     });
     return unsubscribe;
-  }, [currentUser.uid, formDate]);
+  }, [user.uid, formDate]);
   return <AppointmentsTableComponent appointments={appointments} />;
 };
 

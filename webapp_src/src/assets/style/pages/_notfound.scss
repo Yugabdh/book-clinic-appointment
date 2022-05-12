@@ -1,0 +1,70 @@
+@use '../base' as base;
+@use '../components/section' as section;
+
+.notfoundpage.view {
+  height: 100vh;
+  position: relative;
+  overflow: hidden;
+
+  .mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-attachment: fixed;
+  }
+
+  .hero-header {  
+    font-family: base.$montserrat;
+    .hero-header-content {
+      color: base.$white-0;
+  
+      .hero-header-title {
+        font-size: 4rem;
+        .highlight {
+          color: base.$primary-0;
+        }
+      }
+  
+      .hero-header-description {
+        font-size: 1.2rem;
+        font-weight: base.$light;
+      }
+  
+      .hero-header-call-to-action {
+        padding-top: 76px;
+      }
+    }
+    
+    @include base.respond-to(medium) {
+      .hero-header-content {
+  
+        .hero-header-title {
+          font-size: 2.5rem;
+        }
+    
+        .hero-header-description {
+          font-size: 1.2rem;
+        }
+      }
+    }
+  
+    @include base.respond-to(small) {
+      .hero-header-content {
+  
+        .hero-header-title {
+          font-size: 2rem;
+        }
+    
+        .hero-header-description {
+          padding-top: 24px;
+          font-size: 1rem;
+        }
+      }
+    }
+  }
+}

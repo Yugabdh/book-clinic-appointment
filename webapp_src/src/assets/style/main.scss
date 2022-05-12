@@ -8,6 +8,7 @@
 @use './components/verticalCenteredModal';
 @use './components/cardComponentWithHeading';
 @use './components/appointmentTable';
+@use './components/fullPageLoader';
 
 // layout
 @use './layout/navigation';
@@ -20,3 +21,4 @@
 @use './pages/appointment';
 @use './pages/admindashboard';
 @use './pages/adminappointment';
+@use './pages/notfound';

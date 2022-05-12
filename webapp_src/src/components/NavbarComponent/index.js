@@ -2,38 +2,42 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 
 import { NavLink, Link, useNavigate } from "react-router-dom";
+
 import Container from 'react-bootstrap/Container';
 import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 
+import { selectUser, selectClaims } from '../../redux/user';
+import useLogout from '../../hooks/useLogout';
+
 import logoColor from '../../assets/img/png/tooth-color.png';
 import logoWhite from '../../assets/img/png/tooth-white.png';
 
-import { useAuth } from '../../contexts/AuthContext';
-
 const NavbarComponent = () => {
-  const { currentUser, logOut, receptionist } = useAuth();
   const navigate = useNavigate();
+  const {
+    logoutUser
+  } = useLogout(handleSignOut);
 
-  async function handleSignOut() {
+  const transparent = useSelector((state) => state.navbarTransparent.transparent);
+  const [scrollNav, setScrollNav] = useState(false);
+  const user = useSelector(selectUser);
+  const claims = useSelector(selectClaims);
+
+  function handleSignOut() {
     try {
-      await logOut();
       navigate("/", { replace: true });
     } catch {
-      console.log("error");
       navigate("/", { replace: true });
     }
   }
-
-  const [scrollNav, setScrollNav] = useState(false);
-  const transparent = useSelector((state) => state.navbarTransparent.transparent);
 
   const changeNav = useCallback(() => {
     if (transparent) {
       if (window.scrollY >= 80) {
         setScrollNav(true);
       } else {
-          setScrollNav(false);
+        setScrollNav(false);
       }
     }
   }, [transparent]);
@@ -42,28 +46,28 @@ const NavbarComponent = () => {
       window.addEventListener('scroll', changeNav);
   }, [changeNav]);
 
-  const DisplayIfCurrentUser = ({children}) => {
+  const DisplayIfUser = ({children}) => {
     return (
-      currentUser ? children: ''
+      user ? children: ''
     );
   }
 
-  const NotDisplayIfCurrentUser = ({children}) => {
+  const NotDisplayIfUser = ({children}) => {
     return (
-      !currentUser ? children: ''
+      !user ? children: ''
     );
   }
 
-  const NotDisplayIfAdmin = ({children}) => {
+  const NotDisplayIfReceptionist = ({children}) => {
     return (
-      !receptionist ? children: ''
+      claims? !claims.receptionist ? children: '': ''
     );
   }
 
   return (
     <Navbar bg="light" variant="light" expand="lg" fixed="top" className={`${scrollNav || !transparent ? "" : "scrollNav"}`} onToggle={()=>setScrollNav(true)} collapseOnSelect={true}>
       <Container>
-        <Navbar.Brand as={Link} to={`${!currentUser ? "/" : "/dashboard"}`}>
+        <Navbar.Brand as={Link} to={`${!user ? "/" : "/dashboard"}`}>
           <img
             src={scrollNav || !transparent ? logoColor : logoWhite}
             width="30"
@@ -76,21 +80,21 @@ const NavbarComponent = () => {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="responsive-navbar-nav">
             <Nav className="me-auto">
-              <NotDisplayIfCurrentUser>
+              <NotDisplayIfUser>
                 <Nav.Link as={NavLink} to="/login" href="/login">Login</Nav.Link>
-              </NotDisplayIfCurrentUser>
-              <DisplayIfCurrentUser>
+              </NotDisplayIfUser>
+              <DisplayIfUser>
                 <Nav.Link as={NavLink} to="/dashboard" href="/dashboard">Dashboard</Nav.Link>
-                <NotDisplayIfAdmin>
+                <NotDisplayIfReceptionist>
                   <Nav.Link as={NavLink} to="/profile" href="/profile">Profile</Nav.Link>
-                </NotDisplayIfAdmin>
+                </NotDisplayIfReceptionist>
                 <Nav.Link as={NavLink} to="/appointments" href="/appointments">Book Appointment</Nav.Link>
-              </DisplayIfCurrentUser>
+              </DisplayIfUser>
             </Nav>
             <Nav>
-              <DisplayIfCurrentUser>
-                <button className="primary-button" onClick={ handleSignOut }>Log out</button>
-              </DisplayIfCurrentUser>
+              <DisplayIfUser>
+                <button className="primary-button" onClick={ logoutUser }>Log out</button>
+              </DisplayIfUser>
             </Nav>
         </Navbar.Collapse>
       </Container>

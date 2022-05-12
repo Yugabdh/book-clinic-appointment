@@ -2,6 +2,8 @@ import { initializeApp } from 'firebase/app';
 
 import { 
   getAuth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
   onAuthStateChanged,
   signOut
 } from 'firebase/auth';
@@ -28,6 +30,8 @@ export const db = getFirestore(app);
 export {
   app,
   auth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
   onAuthStateChanged,
   signOut
 };

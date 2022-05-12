@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import navbarTransparent from './redux/navbarTransparent';
-import userSlice from './redux/userSlice';
+import user from './redux/user';
 
 export default configureStore({
   reducer: {
     navbarTransparent: navbarTransparent,
-    userSlice: userSlice
+    user: user
   },
 });
