@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 
 import { useNavigate } from "react-router-dom";
 
-
 import useForm from '../../hooks/useForm';
 import useGetUserData from '../../hooks/useGetUserData';
 

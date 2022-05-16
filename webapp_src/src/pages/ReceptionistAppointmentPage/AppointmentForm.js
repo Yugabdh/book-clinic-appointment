@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+
 import { useNavigate } from "react-router-dom";
-import { db } from '../../firebase';
+
+import useForm from '../../hooks/useForm';
 import { addDoc, setDoc, collection, serverTimestamp, getDocs, onSnapshot, query, where, doc } from "firebase/firestore";
+import { db } from '../../firebase';
+
 import "react-datepicker/dist/react-datepicker.css";
 import DatePicker from 'react-datepicker';
 
@@ -11,35 +14,28 @@ import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
+
 import VerticalCenteredModalComponent from '../../components/VerticalCenteredModalComponent/';
 import AutofillAnswerModalComponent from '../../components/AutofillAnswerModalComponent/';
 
+import validate from './AppointmentFormValidationRules';
+
 const AppointmentForm = () => {
   const navigate = useNavigate();
-
-  // Form inputs
-  const [values, setValues] = useState({
-    phoneNumber: '',
-    formAppointmentName: '',
-    formPatientName: '',
-    formAppointmentDate: '',
-    formSymptoms: '',
-    formSlot: null
-  });
 
   // Modal states
   const [modalData, setModalData] = useState({});
   const [modalShow, setModalShow] = useState(false);
   const [modalShowAction, setModalShowAction] = useState(false);
 
-  const [bookingAppointment, setBookingAppointment] = useState(false);
-
-  const [slotdata, setSlotData] = useState({
+  // slot counter and disable flag
+  const [slotCounter, setslotCounter] = useState({
     slot1_counter: 0,
     slot2_counter: 0,
     slot3_counter: 0,
     slot4_counter: 0
   });
+  const [slotStatusFlag, setSlotStatusFlag] = useState({ slot1: false, slot2: false, slot3: false, slot4: false});
 
   // contact number search States
   const [isSearching, setIsSearching] = useState(false);
@@ -49,14 +45,14 @@ const AppointmentForm = () => {
   // if user found stores user data
   const [patientdata, setPatientdata] = useState(null);
 
+  const [formDate, setFormDate] = useState();
+
   // Handle modal onSubmit
   const handleSubmitModal = () => {
     if (patientdata) {
       setSavingAppointmentForUser(true);
       setSearchFinished(true);
-      console.log(patientdata.fullName);
-      setValues(values => ({ ...values, formPatientName:  patientdata.fullName, formAppointmentName: 'Appointment set by receptionist'}));
-      console.log(values)
+      setValues(values => ({ ...values, patientName:  patientdata.fullName, appointmentName: 'Appointment set by receptionist'}));
     }
   }
 
@@ -96,12 +92,6 @@ const AppointmentForm = () => {
     }
     setIsSearching(false);
   }
-  
-  const [slotStatusFlag, setSlotStatusFlag] = useState({ slot1: false, slot2: false, slot3: false, slot4: false});
-
-  const [formDate, setFormDate] = useState();
-
-  const userSlice = useSelector((state) => state.userSlice);
 
   const convertDate = (date) => {
     var d = new Date(date),
@@ -123,146 +113,31 @@ const AppointmentForm = () => {
     return day !== 0 && day !== 6;
   };
 
-  // Errors values for input
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  async function updateFirebase() {
-    setBookingAppointment(true);
-
-    const timeToSlotMapping = {
-      "slot1": "09:00 AM-12:00 PM",
-      "slot2": "12:00 PM-03:00 PM",
-      "slot3": "03:00 PM-06:00 PM",
-      "slot4": "06:00 PM-09:00 PM",
-    }
-
-    if (!(slotdata[values.formSlot+"_counter"] >= 4)) {
-      slotdata[values.formSlot+"_counter"] += 1;
-      const slotcounterRef = doc(db, "appointments", values.formAppointmentDate);
-      console.log(slotdata)
-      await setDoc(slotcounterRef, {
-        ...slotdata
-      }).then(
-        (slotupdateRef) => {
-          const serverTS = serverTimestamp();
-          if (savingAppointmentForUser) {
-            addDoc(collection(db, "users/"+patientdata.uid+"/appointments/"+values.formAppointmentDate, "appointments"), {
-              appointmentName: values.formAppointmentName,
-              date: values.formAppointmentDate,
-              slot: values.formSlot,
-              symtoms: values.formSymptoms,
-              status: 'pending',
-              created: serverTS
-            }).then((ref) => {
-              addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
-                uid: patientdata.uid,
-                uname: patientdata.fullName,
-                unumber: "+91"+values.phoneNumber,
-                appointmentId: ref.id,
-                appointmentName: values.formAppointmentName,
-                symtoms: values.formSymptoms,
-                status: 'pending',
-                created: serverTS
-              }).then((appointmentRef) => {
-                setModalData({
-                  title: "Appointment booked",
-                  message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
-                  classname: "sucess"
-                });
-                setModalShow(true);
-                setBookingAppointment(false);
-                setValues({
-                  formAppointmentName: '',
-                  formAppointmentDate: '',
-                  formSymptoms: '',
-                  formSlot: null
-                });
-                setFormDate();
-              })
-            });
-          } else {
-            addDoc(collection(db, "appointments/"+values.formAppointmentDate, values.formSlot), {
-              uname: values.formPatientName,
-              unumber: "+91"+values.phoneNumber,
-              appointmentId: '',
-              appointmentName: values.formAppointmentName,
-              symtoms: values.formSymptoms,
-              status: 'pending',
-              created: serverTS
-            }).then((appointmentRef) => {
-              setModalData({
-                title: "Appointment booked",
-                message: "Appointment booked successfully. For " + values.formAppointmentDate + " in slot " + timeToSlotMapping[values.formSlot],
-                classname: "sucess"
-              });
-              setModalShow(true);
-              setBookingAppointment(false);
-              setValues({
-                formAppointmentName: '',
-                formAppointmentDate: '',
-                formSymptoms: '',
-                formSlot: null
-              });
-              setFormDate();
-            })
-          }
-        }
-      )
-    }
-  }
-
-  useEffect(() => {
-    if (Object.keys(errors).length === 0 && isSubmitting) {
-      setIsSubmitting(false);
-      updateFirebase();
-    }
-  }, [errors, isSubmitting]);
-
-  function validate(values) {
-    let errors = {};
-    if (!values.formPatientName) {
-      errors.formPatientName = "Appointment name is required.";
-    }
-
-    if(!values.formAppointmentDate) {
-      errors.formAppointmentDate = "Appointment date is required.";
-    }
-
-    if(!values.formSymptoms) {
-      errors.formSymptoms = "Symptoms is required.";
-    }
-    if(!values.formSlot) {
-      errors.formSlot = "Slot is required.";
-    }
-    return errors;
-  };
-
-  const handleSubmit = (event) => {
-    if (event) event.preventDefault();
-    setErrors(validate(values));
-    setIsSubmitting(true);
-  };
-
-  const handleChange = (event) => {
-    event.persist();
-    setValues(values => ({ ...values, [event.target.name]: event.target.value }));
-  };
-
+  const {
+    values,
+    errors,
+    setValues,
+    setErrors,
+    handleChange,
+    handleSubmit,
+    isSubmitting,
+    setIsSubmitting,
+  } = useForm(updateFirebase, validate);
+  
   // Handle changes of date field converting it to valid firestore doc id
   const handleChangeDate = (date) => {
     const dateInFormate = convertDate(date);
-    setValues(values => ({ ...values, 'formAppointmentDate': dateInFormate}))
+    setValues(values => ({ ...values, 'appointmentDate': dateInFormate}))
     setFormDate(date);
   }
 
   // slots counter state handler
   useEffect(() => {
     // unselect if any value is selected
-    setValues({...values, formSlot: null});
+    setValues({...values, slot: null});
     setSlotStatusFlag({ slot1: false, slot2: false, slot3: false, slot4: false });
-    if (values.formAppointmentDate) {
-      const q = query(doc(db, "appointments/"+values.formAppointmentDate));
+    if (values.appointmentDate) {
+      const q = query(doc(db, "appointments/"+values.appointmentDate));
       var data = {}
       const unsubscribe = onSnapshot(q, (querySnapshot) => {
         data = querySnapshot.data();
@@ -280,16 +155,97 @@ const AppointmentForm = () => {
             setSlotStatusFlag({...slotStatusFlag, slot4: true})
           }
 
-          setSlotData({...data})
+          setslotCounter({...data})
         }
       });
 
       return unsubscribe;
     }
-  }, [values.formAppointmentDate]);
+  }, [values.appointmentDate]);
+
+  async function updateFirebase() {
+    const timeToSlotMapping = {
+      "slot1": "09:00 AM-12:00 PM",
+      "slot2": "12:00 PM-03:00 PM",
+      "slot3": "03:00 PM-06:00 PM",
+      "slot4": "06:00 PM-09:00 PM",
+    }
+
+    if (!(slotCounter[values.slot+"_counter"] >= 4)) {
+      slotCounter[values.slot+"_counter"] += 1;
+      const slotcounterRef = doc(db, "appointments", values.appointmentDate);
+      await setDoc(slotcounterRef, {
+        ...slotCounter
+      }).then(
+        (slotupdateRef) => {
+          const serverTS = serverTimestamp();
+          if (savingAppointmentForUser) {
+            addDoc(collection(db, "users/"+patientdata.uid, "appointments"), {
+              appointmentName: values.appointmentName,
+              date: values.appointmentDate,
+              slot: values.slot,
+              symtoms: values.symptoms,
+              status: 'pending',
+              created: serverTS
+            }).then((ref) => {
+              addDoc(collection(db, "appointments/"+values.appointmentDate, values.slot), {
+                uid: patientdata.uid,
+                uname: patientdata.fullName,
+                unumber: "+91"+values.phoneNumber,
+                appointmentId: ref.id,
+                appointmentName: values.appointmentName,
+                symtoms: values.symptoms,
+                status: 'pending',
+                created: serverTS
+              }).then((appointmentRef) => {
+                setModalData({
+                  title: "Appointment booked",
+                  message: "Appointment booked successfully. For " + values.appointmentDate + " in slot " + timeToSlotMapping[values.slot],
+                  classname: "sucess"
+                });
+                setModalShow(true);
+                setValues({
+                  appointmentName: '',
+                  appointmentDate: '',
+                  symptoms: '',
+                  slot: null
+                });
+                setFormDate();
+              })
+            });
+          } else {
+            addDoc(collection(db, "appointments/"+values.appointmentDate, values.slot), {
+              uname: values.patientName,
+              unumber: "+91"+values.phoneNumber,
+              appointmentId: '',
+              appointmentName: values.appointmentName,
+              symtoms: values.symptoms,
+              status: 'pending',
+              created: serverTS
+            }).then((appointmentRef) => {
+              setModalData({
+                title: "Appointment booked",
+                message: "Appointment booked successfully. For " + values.appointmentDate + " in slot " + timeToSlotMapping[values.slot],
+                classname: "sucess"
+              });
+              setModalShow(true);
+              setValues({
+                appointmentName: '',
+                appointmentDate: '',
+                symptoms: '',
+                slot: null
+              });
+              setFormDate();
+            })
+          }
+        }
+      ).finally(()=> {
+        setIsSubmitting(false);
+      })
+    }
+  }
 
   return (
-    <>
     <Form onSubmit={ handleSubmit } noValidate>
       <Form.Group>
         <Form.Label>Contact Number</Form.Label>
@@ -341,33 +297,33 @@ const AppointmentForm = () => {
                 autoComplete="off"
                 type="text"
                 placeholder="Enter patient name"
-                name="formPatientName"
+                name="patientName"
                 onChange={handleChange}
-                value={values.formPatientName || ''}
-                className={`${errors.formPatientName && 'wrong-input'}`}
+                value={values.patientName || ''}
+                className={`${errors.patientName && 'wrong-input'}`}
                 required
                 disabled={savingAppointmentForUser}
               />
               {
-              errors.formPatientName && (<Form.Text className="text-danger">{errors.formPatientName}</Form.Text>)
+              errors.patientName && (<Form.Text className="text-danger">{errors.patientName}</Form.Text>)
               }
             </Col>
             <Col md={12} lg={6}>
               <Form.Label>Appointment date</Form.Label>
               <DatePicker
-                name="formAppointmentDate"
+                name="appointmentDate"
                 selected={formDate}
                 placeholderText="Select appointment day"
                 onChange={date => handleChangeDate(date)}
                 dateFormat='dd-MM-yyyy'
                 minDate={new Date()}
                 maxDate={new Date().setDate(new Date().getDate() + 5)}
-                className={`form-control ${errors.formAppointmentDate && 'wrong-input'}`}
+                className={`form-control ${errors.appointmentDate && 'wrong-input'}`}
                 filterDate={isWeekday}
                 autoComplete="off"
               />
               {
-              errors.formAppointmentDate && (<Form.Text className="text-danger">{errors.formAppointmentDate}</Form.Text>)
+              errors.appointmentDate && (<Form.Text className="text-danger">{errors.appointmentDate}</Form.Text>)
               }
               
             </Col>
@@ -376,7 +332,7 @@ const AppointmentForm = () => {
               <div className="slots">
                 <div className="title">Choose a apoointment slot</div>
                 <label className="slot" htmlFor="slot_1">
-                  <input type="radio" value="slot1" name="formSlot" id="slot_1" checked={values.formSlot === "slot1"} onChange={handleChange} disabled={slotStatusFlag.slot1}/>
+                  <input type="radio" value="slot1" name="slot" id="slot_1" checked={values.slot === "slot1"} onChange={handleChange} disabled={slotStatusFlag.slot1}/>
                   <div className={`slot-content ${slotStatusFlag.slot1 ? "disabled" : ""}`}>
                     <div className="slot-details">
                       <span>09:00 AM</span>
@@ -386,7 +342,7 @@ const AppointmentForm = () => {
                 </label>
 
                 <label className="slot" htmlFor="slot_2">
-                  <input type="radio" value="slot2" name="formSlot" id="slot_2" checked={values.formSlot === "slot2"} onChange={handleChange} disabled={slotStatusFlag.slot2}/>
+                  <input type="radio" value="slot2" name="slot" id="slot_2" checked={values.slot === "slot2"} onChange={handleChange} disabled={slotStatusFlag.slot2}/>
                   <div className={`slot-content ${slotStatusFlag.slot2 ? "disabled" : ""}`}>
                     <div className="slot-details">
                       <span>12:00 PM</span>
@@ -396,7 +352,7 @@ const AppointmentForm = () => {
                 </label>
 
                 <label className="slot" htmlFor="slot_3">
-                  <input type="radio" value="slot3" name="formSlot" id="slot_3" checked={values.formSlot === "slot3"} onChange={handleChange} disabled={slotStatusFlag.slot3}/>
+                  <input type="radio" value="slot3" name="slot" id="slot_3" checked={values.slot === "slot3"} onChange={handleChange} disabled={slotStatusFlag.slot3}/>
                   <div className={`slot-content ${slotStatusFlag.slot3 ? "disabled" : ""}`}>
                     <div className="slot-details">
                       <span>03:00 PM</span>
@@ -406,7 +362,7 @@ const AppointmentForm = () => {
                 </label>
 
                 <label className="slot" htmlFor="slot_4">
-                  <input type="radio" value="slot4" name="formSlot" id="slot_4" checked={values.formSlot === "slot4"} onChange={handleChange} disabled={slotStatusFlag.slot4}/>
+                  <input type="radio" value="slot4" name="slot" id="slot_4" checked={values.slot === "slot4"} onChange={handleChange} disabled={slotStatusFlag.slot4}/>
                   <div className={`slot-content ${slotStatusFlag.slot4 ? "disabled" : ""}`}>
                     <div className="slot-details">
                       <span>06:00 PM</span>
@@ -416,7 +372,7 @@ const AppointmentForm = () => {
                 </label>
               </div>
               {
-              errors.formSlot && (<Form.Text className="text-danger">{errors.formSlot}</Form.Text>)
+              errors.slot && (<Form.Text className="text-danger">{errors.slot}</Form.Text>)
               }
             </Col>
 
@@ -425,30 +381,22 @@ const AppointmentForm = () => {
               <Form.Control
                 as="textarea" rows={3}
                 autoComplete="off"
-                name="formSymptoms"
+                name="symptoms"
                 onChange={handleChange}
-                value={values.formSymptoms || ''}
-                className={`${errors.formSymptoms && 'wrong-input'}`}
+                value={values.symptoms || ''}
+                className={`${errors.symptoms && 'wrong-input'}`}
                 required
               />
               {
-              errors.formSymptoms && (<Form.Text className="text-danger">{errors.formSymptoms}</Form.Text>)
+              errors.symptoms && (<Form.Text className="text-danger">{errors.symptoms}</Form.Text>)
               }
               
             </Col>
           </Row>
         </Form.Group>
 
-        <button type="submit" className="primary-button button-lg" disabled={bookingAppointment}>
-          { 
-          bookingAppointment ? 
-          <Spinner
-            as="span"
-            animation="grow"
-            size="sm"
-            role="status"
-            aria-hidden="true"
-          />: 'Book Appointment'}
+        <button type="submit" className="primary-button button-lg" disabled={isSubmitting}>
+          {isSubmitting ? "Booking Appointment...": 'Book Appointment'}
         </button>
       </>: ""
       }
@@ -471,11 +419,10 @@ const AppointmentForm = () => {
             setPatientdata(null);
           }
         }
-        handleClose={setModalShowAction}
+        handleclose={setModalShowAction}
         handlesubmit={handleSubmitModal}
       />
     </Form>
-    </>
   );
 };
 

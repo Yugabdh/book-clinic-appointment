@@ -29,7 +29,7 @@ const ReceptionAppointmentsTabelComponent = (props) => {
       }, { merge: true });
 
       if(uid) {
-        await setDoc(doc(db, "users/"+uid+"/appointments/"+props.formDate+"/appointments", userAppointmentId), {
+        await setDoc(doc(db, "users/"+uid+"/appointments/", userAppointmentId), {
           status: "approved"
         }, { merge: true });
       }
@@ -57,7 +57,7 @@ const ReceptionAppointmentsTabelComponent = (props) => {
           ...slotdata
         }).then((ref)=> {
           if(uid) {
-            setDoc(doc(db, "users/"+uid+"/appointments/"+props.formDate+"/appointments", userAppointmentId), {
+            setDoc(doc(db, "users/"+uid+"/appointments/", userAppointmentId), {
               status: "rejected"
             }, { merge: true });
           }
@@ -76,7 +76,7 @@ const ReceptionAppointmentsTabelComponent = (props) => {
       <td>{timeToSlotMapping[props.slot]}</td>
       <td className={`status status-`+appointment.status}>{appointment.status}</td>
       <td>
-      <ButtonGroup aria-label="Basic example">
+      <ButtonGroup aria-label="Accept Reject button group">
         <Button 
           variant="success"
           data-appoinmentid={appointment.docId}

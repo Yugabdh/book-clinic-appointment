@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 
 import Container from 'react-bootstrap/Container';
@@ -7,9 +7,6 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 
 import { makeVisible } from '../../redux/navbarTransparent';
-import { SET_UID, getUserData } from '../../redux/userSlice';
-
-import { useAuth } from '../../contexts/AuthContext';
 
 import AppointmentWrapper from './AppointmentWrapper';
 import CardComponentWithHeading from '../../components/CardComponentWithHeading';
@@ -22,14 +19,6 @@ const ReceptionistDashboard = () => {
     dispatch(makeVisible());
   }, [dispatch]);
 
-  const { currentUser } = useAuth();
-  useEffect(() => {
-    // Set UID
-    dispatch(SET_UID(currentUser.uid));
-    // get User Data
-    dispatch(getUserData(currentUser));
-  }, [currentUser.uid]);
-
   return (
     <section className="dashboard-section">
       <Container>
@@ -37,12 +26,10 @@ const ReceptionistDashboard = () => {
           <Col sm={12} lg={12} className="pt-5 pt-lg-0">
             <CardComponentWithHeading 
               heading={
-                <>
-                  <div className="d-flex justify-content-between align-items-center header">
-                    <h3 className="card-heading">Appointments</h3>
-                    <Link to="/appointments" className="primary-button d-none d-md-block">New Appointment</Link>
-                  </div>
-                </>
+                <div className="d-flex justify-content-between align-items-center header">
+                  <h3 className="card-heading">Appointments</h3>
+                  <Link to="/appointments" className="primary-button d-none d-md-block">New Appointment</Link>
+                </div>
               }
               children={<AppointmentWrapper />}
             />

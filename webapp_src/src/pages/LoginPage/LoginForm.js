@@ -61,7 +61,6 @@ const LoginForm = () => {
   } = useLogin(values);
 
   function login() {
-    console.log('login'+loading);
     if(!loading && values.phoneNumber && !allowSignIn) {
       generateRecaptcha(setRecaptchaRequest);
       signInWithMobileNumber(otpSend, otpSendFailed);
@@ -74,7 +73,6 @@ const LoginForm = () => {
         setErrors({otp: "OTP must be 6 characters."});
       } else {
         setErrors({});
-        console.log("Calling signInUser");
         let confirmationResult = window.confirmationResult;
         confirmationResult.confirm(values.otp).then((result) => {
           const user = result.user;
@@ -82,24 +80,24 @@ const LoginForm = () => {
           console.log(user.uid);
           if (user) {
             // setting up claims
-            let customClaims = {doctor: false, receptionist: false,};
+            let doctor=false, receptionist=false;
             user.getIdTokenResult().then((idTokenResult) => {
               console.log(idTokenResult);
               // Confirm the user is an Receptionist.
               if (!!idTokenResult.claims.receptionist) {
-                customClaims.receptionist = true;
+                receptionist = true;
               }
               // Confirm the user is an doctor.
               if (!!idTokenResult.claims.doctor) {
-                customClaims.doctor = true;
+                doctor = true;
               }
             }).catch((error) => {
               console.log(error);
+            }).finally(() => {
+              dispatch(setClaims({doctor: doctor, receptionist: receptionist}));
+              dispatch(setUser({uid: user.uid, phoneNumber: user.phoneNumber}));
+              navigate("/dashboard", { replace: true });
             });
-            dispatch(setUser({uid: user.uid, phoneNumber: user.phoneNumber}));
-            dispatch(setClaims(customClaims));
-
-            navigate("/dashboard", { replace: true });
           }
         }).catch((error) => {
           let errorMsg = "";

@@ -10,11 +10,14 @@ import ProfilePage from './pages/ProfilePage';
 import AppointmentPage from './pages/AppointmentPage';
 import NotFoundPage from './pages/NotFoundPage';
 
-// import ReceptionistDashboard from './pages/ReceptionistDashboard';
-// import ReceptionistAppointmentPage from './pages/ReceptionistAppointmentPage';
+import ReceptionistDashboard from './pages/ReceptionistDashboard';
+import ReceptionistAppointmentPage from './pages/ReceptionistAppointmentPage';
+
+import DoctorDashboardPage from './pages/DoctorDashboardPage';
 
 import RequireAuth from './components/RequireAuthComponent';
-// import RequireReceptionClaim from './components/RequireReceptionClaim';
+import RequireReceptionClaim from './components/RequireReceptionClaim';
+import RequireDoctorClaim from './components/RequireDoctorClaim';
 
 
 const RoutesConfig = () => {
@@ -28,12 +31,14 @@ const RoutesConfig = () => {
         user? 
           claims.receptionist ? 
             <>
-              {/* <Route path="/dashboard" element={<RequireReceptionClaim><ReceptionistDashboard /></RequireReceptionClaim>} />
-              <Route path="/appointments" element={<RequireReceptionClaim><ReceptionistAppointmentPage /></RequireReceptionClaim>} /> */}
+              <Route path="/dashboard" element={<RequireReceptionClaim><ReceptionistDashboard /></RequireReceptionClaim>} />
+              <Route path="/appointments" element={<RequireReceptionClaim><ReceptionistAppointmentPage /></RequireReceptionClaim>} />
             </>
           : 
             claims.doctor? 
-              <></>
+              <>
+                <Route path="/dashboard" element={<RequireDoctorClaim><DoctorDashboardPage /></RequireDoctorClaim>} />
+              </>
               : 
               <>
                 <Route path="/dashboard" element={<RequireAuth><DashboardPage /></RequireAuth>} />

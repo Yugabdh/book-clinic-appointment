@@ -58,9 +58,15 @@ const NavbarComponent = () => {
     );
   }
 
-  const NotDisplayIfReceptionist = ({children}) => {
+  const NotDisplayIfSpecialUser = ({children}) => {
     return (
-      claims? !claims.receptionist ? children: '': ''
+      claims? claims.receptionist || claims.doctor ? '': children: ''
+    );
+  }
+
+  const NotDisplayIfDoctor = ({children}) => {
+    return (
+      claims? claims.doctor ? '': children: ''
     );
   }
 
@@ -85,10 +91,12 @@ const NavbarComponent = () => {
               </NotDisplayIfUser>
               <DisplayIfUser>
                 <Nav.Link as={NavLink} to="/dashboard" href="/dashboard">Dashboard</Nav.Link>
-                <NotDisplayIfReceptionist>
+                <NotDisplayIfSpecialUser>
                   <Nav.Link as={NavLink} to="/profile" href="/profile">Profile</Nav.Link>
-                </NotDisplayIfReceptionist>
-                <Nav.Link as={NavLink} to="/appointments" href="/appointments">Book Appointment</Nav.Link>
+                </NotDisplayIfSpecialUser>
+                <NotDisplayIfDoctor>
+                  <Nav.Link as={NavLink} to="/appointments" href="/appointments">Book Appointment</Nav.Link>
+                </NotDisplayIfDoctor>
               </DisplayIfUser>
             </Nav>
             <Nav>

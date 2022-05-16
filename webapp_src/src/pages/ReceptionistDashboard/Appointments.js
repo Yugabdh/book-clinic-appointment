@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from '../../firebase';
 
-import { useAuth } from '../../contexts/AuthContext';
+import { selectUser } from '../../redux/user';
 
 import ReceptionAppointmentsTabelComponent from '../../components/ReceptionAppointmentsTabelComponent';
 
@@ -22,7 +24,7 @@ const Appointments = ({ formDate, radioValue }) => {
     return dateInFormate;
   }
 
-  const { currentUser } = useAuth();
+  const user = useSelector(selectUser);
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ const Appointments = ({ formDate, radioValue }) => {
       setAppointments(appointments);
     });
     return unsubscribe;
-  }, [currentUser.uid, formDate, radioValue]);
+  }, [user.uid, formDate, radioValue]);
   return <ReceptionAppointmentsTabelComponent appointments={appointments} slot={radioValue} formDate={convertDate(formDate)}/>;
 };
 
