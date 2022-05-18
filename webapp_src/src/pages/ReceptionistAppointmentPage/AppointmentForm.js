@@ -190,8 +190,8 @@ const AppointmentForm = () => {
             }).then((ref) => {
               addDoc(collection(db, "appointments/"+values.appointmentDate, values.slot), {
                 uid: patientdata.uid,
-                uname: patientdata.fullName,
-                unumber: "+91"+values.phoneNumber,
+                fullName: patientdata.fullName,
+                phoneNumber: "+91"+values.phoneNumber,
                 appointmentId: ref.id,
                 appointmentName: values.appointmentName,
                 symtoms: values.symptoms,
@@ -215,8 +215,8 @@ const AppointmentForm = () => {
             });
           } else {
             addDoc(collection(db, "appointments/"+values.appointmentDate, values.slot), {
-              uname: values.patientName,
-              unumber: "+91"+values.phoneNumber,
+              fullName: values.patientName,
+              phoneNumber: "+91"+values.phoneNumber,
               appointmentId: '',
               appointmentName: values.appointmentName,
               symtoms: values.symptoms,

@@ -140,8 +140,8 @@ const AppointmentForm = () => {
               // adding appointment to appoinment collection 
               addDoc(collection(db, "appointments/"+values.appointmentDate, values.slot), {
                 uid: user.uid,
-                uname: user.fullName,
-                unumber: user.phoneNumber,
+                fullName: user.fullName,
+                phoneNumber: user.phoneNumber,
                 appointmentId: ref.id,
                 appointmentName: values.appointmentName,
                 symtoms: values.symptoms,

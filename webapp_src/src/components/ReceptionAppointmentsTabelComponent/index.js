@@ -71,8 +71,8 @@ const ReceptionAppointmentsTabelComponent = (props) => {
   const appointmentList = props.appointments.map((appointment, i) => 
     <tr key={i}>
       <td>{parseInt(i)+1}</td>
-      <td>{appointment.uname}</td>
-      <td>{appointment.unumber}</td>
+      <td>{appointment.fullName}</td>
+      <td>{appointment.phoneNumber}</td>
       <td>{timeToSlotMapping[props.slot]}</td>
       <td className={`status status-`+appointment.status}>{appointment.status}</td>
       <td>

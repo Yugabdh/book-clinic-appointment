@@ -15,6 +15,78 @@
     padding-right: 0!important;
   }
 
+
+
+  form {
+    input {
+      height: 48px;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      border: none;
+      padding-left: 20px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      -webkit-transition: all 0.3s;
+      -webkit-transition: 0.3s;
+      -o-transition: 0.3s;
+      transition: 0.3s;
+      border: 1px solid base.$black-1;
+      &:hover{
+        border: 1px solid base.$primary-2;
+      }
+
+      &:focus {
+        border: 1px solid base.$primary-2;
+        box-shadow: none;
+        &::-webkit-input-placeholder {
+          color: black;
+          opacity: 1
+        }
+        &::-moz-placeholder {
+          @include placeholder-on-focus
+        }
+        &:-ms-input-placeholder {
+          color: black;
+          opacity: 1
+        }
+        &:-o-input-placeholder {
+          color: black;
+          opacity: 1
+        }
+      }
+
+      &.wrong-input {
+        border: 1px solid rgb(220,53,69);
+      }
+    }
+      
+    .form-text {
+      margin-top: 0!important;
+    }
+
+    input:focus input::-webkit-input-placeholder, input::-moz-placeholder, input:-ms-input-placeholder, input:-o-input-placeholder {
+      color: black;
+      opacity: 1
+    }
+
+    .primary-button {
+      width: 100%;
+      border-radius: 5px;
+      -webkit-border-radius: 5px;
+      -moz-border-radius: 5px;
+      -ms-border-radius: 5px;
+      -o-border-radius: 5px;
+      padding: 0.7rem 2rem;
+    }
+    
+    .country-span {
+      margin-bottom: 20px
+    }
+  }
+
   .filter-wrapper {
     border-radius: 10px;
     padding: 20px;
@@ -28,75 +100,57 @@
       flex-direction: column;
       justify-content: center;
 
-      form {
-        input {
-          height: 48px;
-          border-radius: 5px;
-          -webkit-border-radius: 5px;
-          -moz-border-radius: 5px;
-          -ms-border-radius: 5px;
-          -o-border-radius: 5px;
-          border: none;
-          padding-left: 20px;
-          margin-bottom: 20px;
-          font-size: 16px;
-          -webkit-transition: all 0.3s;
-          -webkit-transition: 0.3s;
-          -o-transition: 0.3s;
-          transition: 0.3s;
-          border: 1px solid base.$black-1;
-          &:hover{
-            border: 1px solid base.$primary-2;
-          }
-    
-          &:focus {
-            border: 1px solid base.$primary-2;
-            box-shadow: none;
-            &::-webkit-input-placeholder {
-              color: black;
-              opacity: 1
-            }
-            &::-moz-placeholder {
-              @include placeholder-on-focus
-            }
-            &:-ms-input-placeholder {
-              color: black;
-              opacity: 1
-            }
-            &:-o-input-placeholder {
-              color: black;
-              opacity: 1
-            }
-          }
-    
-          &.wrong-input {
-            border: 1px solid rgb(220,53,69);
-          }
+      .accordion-item {
+        .accordion-button:not(.collapsed) {
+          color: base.$primary-2;
         }
-          
-        .form-text {
-          margin-top: 0!important;
-        }
-    
-        input:focus input::-webkit-input-placeholder, input::-moz-placeholder, input:-ms-input-placeholder, input:-o-input-placeholder {
-          color: black;
-          opacity: 1
-        }
-    
-        .primary-button {
-          width: 100%;
-          border-radius: 5px;
-          -webkit-border-radius: 5px;
-          -moz-border-radius: 5px;
-          -ms-border-radius: 5px;
-          -o-border-radius: 5px;
-          padding: 0.7rem 2rem;
-        }
-        
-        .country-span {
-          margin-bottom: 20px
+        .accordion-button:focus {
+          z-index: 3;
+          border-color: base.$primary-2;
+          outline: 0;
+          box-shadow: 0 0 0 0.25rem base.tint(base.$primary-1, 70%);
         }
       }
     }
+  }
+
+  .appointment-item {
+    cursor: pointer;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transition: all 0.5s;
+    -ms-transition: all 0.5s;
+    -o-transition: all 0.5s;
+    
+    
+    &:hover{
+      box-shadow: 0 .5rem 1rem rgba(0, 0, 0, 0.30)!important;
+    }
+
+    .username {
+      font-weight: base.$semibold;
+      color: base.$primary-2;
+    }
+    .phonenumber {
+      font-size: 0.8rem;
+    }
+  }
+
+
+  .primary-button {
+    width: 100%;
+    border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    -ms-border-radius: 5px;
+    -o-border-radius: 5px;
+    padding: 0.7rem 2rem;
+  }
+
+  .slot-heading {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    color: base.$primary-2;
+    font-weight: base.$semibold;
   }
 }

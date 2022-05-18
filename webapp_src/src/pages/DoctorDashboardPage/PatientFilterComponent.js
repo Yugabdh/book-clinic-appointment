@@ -1,58 +1,50 @@
-import React from 'react'
+import React, { useState } from 'react';
 
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import Form from 'react-bootstrap/Form';
-import InputGroup from 'react-bootstrap/InputGroup';
+import PhoneNumberFilter from './PhoneNumberFilter';
+import UserNameFilter from './UserNameFilter';
+import Accordion from 'react-bootstrap/Accordion';
 
-import useForm from '../../hooks/useForm';
+import AppointmentsList from './AppointmentsList';
+import FullScreenLoaderComponent from '../../components/FullScreenLoaderComponent';
+import TodaysAppointments from './TodaysAppointments';
 
-import validate from './PatientFilterFormValidationRules';
+const PatientFilterComponent = ({setPatientUID, setLoading, loading}) => {
 
-const PatientFilterComponent = ({setPatientUID}) => {
+  const [patientList, setPatientList] = useState([]);
 
-  const {
-    values,
-    errors,
-    handleChange,
-    handleSubmit,
-    isSubmitting
-  } = useForm(search, validate);
-
-  function search() {
-    console.log('search called');
-  }
-  
   return (
     <Container>
       <Row>
         <Col lg={12}>
         <div className="filter-wrapper">	
           <div className="filter p-3">
-          <Form onSubmit={ handleSubmit } noValidate>
-            <Form.Group className="mb-1">
-              <InputGroup>
-                <InputGroup.Text className="country-span">+91</InputGroup.Text>
-                <Form.Control
-                  autoComplete="off"
-                  type="tel"
-                  pattern="[0-9]{10}"
-                  placeholder="Enter contact number"
-                  name="phoneNumber"
-                  value={values.phoneNumber || ''}
-                  className={`${errors.phoneNumber && 'wrong-input'}`}
-                  onChange={handleChange}
-                  required
-                  aria-describedby="phoneNumber"
-                />
-              </InputGroup>
-              {
-              errors.phoneNumber && (<Form.Text className="text-danger">{errors.phoneNumber}</Form.Text>)
-              }
-            </Form.Group>
-            <button type="submit" className="primary-button button-lg" disabled={isSubmitting}>{isSubmitting? "Searching...": "Search by Phone number"}</button>
-          </Form>
+            <PhoneNumberFilter setPatientList={setPatientList} setLoading={setLoading} />
+            <UserNameFilter setPatientList={setPatientList} setLoading={setLoading} />
+            <Accordion className="mt-5">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>Search Result</Accordion.Header>
+                <Accordion.Body>
+                  <div className="appointments-list">
+                    {
+                      loading?
+                      <FullScreenLoaderComponent />
+                      : patientList.length > 0?
+                      <AppointmentsList setPatientUID={setPatientUID} appoinmentList={patientList} /> : <p>Search Result</p>
+                    }
+                  </div>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>Today's Appointments</Accordion.Header>
+                <Accordion.Body>
+                  <TodaysAppointments setPatientUID={setPatientUID} />
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+            
           </div>
         </div>
         </Col>

@@ -27,12 +27,12 @@ const DoctorDashboardPage = () => {
       <Container>
         <Row className="justify-content-center">
           <Col sm={12} lg={4}>
-            <PatientFilterComponent setPatientUID={setPatientUID} setLoading={setLoading} />
+            <PatientFilterComponent setPatientUID={setPatientUID} setLoading={setLoading} loading={loading} />
           </Col>
           <Col sm={12} lg={8} className="pt-5 pt-lg-0">
           <CardComponentWithHeading 
             heading={<h3 className="card-heading">Patient History</h3>}
-            children={<PatientDataComponent patientUID={patientUID} loading={loading} />}
+            children={<PatientDataComponent patientUID={patientUID} />}
           />
           </Col>
         </Row>

@@ -1,8 +1,14 @@
 import React from 'react'
 
-const PatientDataComponent = () => {
+const PatientDataComponent = ({patientUID}) => {
   return (
-    <div>PatientDataComponent</div>
+    <>
+    {
+      patientUID? 
+        <div>{patientUID}</div>
+        : <div>No Patient Selected</div>
+    }
+    </>
   )
 }
 
