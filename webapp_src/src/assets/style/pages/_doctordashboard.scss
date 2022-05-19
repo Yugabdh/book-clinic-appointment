@@ -153,4 +153,23 @@
     color: base.$primary-2;
     font-weight: base.$semibold;
   }
+
+  .wrapper-class {
+    padding: 1rem;
+    border: 1px solid #ccc;
+  }
+  .editor-class {
+    background-color:rgb(241, 241, 241);
+    padding: 1rem;
+    border: 1px solid #ccc;
+  }
+  .toolbar-class {
+    border: 1px solid #ccc;
+  }
+  
+  .save-btn-wrapper {
+    .primary-button {
+      width: auto;
+    }
+  }
 }

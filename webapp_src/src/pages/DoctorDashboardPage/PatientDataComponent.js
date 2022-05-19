@@ -1,11 +1,15 @@
-import React from 'react'
+import React from 'react';
+
+import RichTextEditor from './RichTextEditor';
 
 const PatientDataComponent = ({patientUID}) => {
   return (
     <>
     {
       patientUID? 
-        <div>{patientUID}</div>
+        <>
+        <RichTextEditor patientUID={patientUID} />
+        </>
         : <div>No Patient Selected</div>
     }
     </>

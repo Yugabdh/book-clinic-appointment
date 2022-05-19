@@ -23,7 +23,7 @@ const PatientFilterComponent = ({setPatientUID, setLoading, loading}) => {
           <div className="filter p-3">
             <PhoneNumberFilter setPatientList={setPatientList} setLoading={setLoading} />
             <UserNameFilter setPatientList={setPatientList} setLoading={setLoading} />
-            <Accordion className="mt-5">
+            <Accordion className="mt-5" defaultActiveKey="0">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>Search Result</Accordion.Header>
                 <Accordion.Body>

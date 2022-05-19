@@ -67,7 +67,7 @@ const UserNameFilter = ({setPatientList, setLoading}) => {
         errors.username && (<Form.Text className="text-danger">{errors.username}</Form.Text>)
         }
       </Form.Group>
-      <button type="submit" className="primary-button button-lg" disabled={isSubmitting}>{isSubmitting? "Searching...": "Search by User Name"}</button>
+      <button type="submit" className="primary-button button-lg" disabled={isSubmitting}>{isSubmitting? "Searching...": "Search by Patient Name"}</button>
     </Form>
   );
 }

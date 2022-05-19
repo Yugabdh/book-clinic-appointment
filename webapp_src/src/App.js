@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 
 import store from './store';
 import NavbarComponent from './components/NavbarComponent';
+import UserAuthCheckComponent from './components/UserAuthCheckComponent';
 import FooterComponent from './components/FooterComponent';
 import RoutesConfig from './Route';
 
@@ -15,7 +16,9 @@ function App() {
       <HashRouter>
         <NavbarComponent />
           <main>
-            <RoutesConfig />
+            <UserAuthCheckComponent>
+              <RoutesConfig />
+            </UserAuthCheckComponent>
           </main>
         <FooterComponent />
       </HashRouter>
