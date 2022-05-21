@@ -101,7 +101,9 @@ const TodaysAppointments = ({setPatientUID}) => {
 
   return (
     <>
-    <button onClick={() => getDataFromFirebase()} className="primary-button button-lg">Get Appointments</button>
+    <button onClick={() => getDataFromFirebase()} className="primary-button button-lg">
+      {slotOneList.length >0 || slotTwoList.length >0 || slotThreeList.length >0 || slotFourList.length >0? "Refresh":"Get Appointments"}
+    </button>
     <div className="appointments-list">
     {loading1? <FullScreenLoaderComponent />: 
       slotOneList.length > 0? 
