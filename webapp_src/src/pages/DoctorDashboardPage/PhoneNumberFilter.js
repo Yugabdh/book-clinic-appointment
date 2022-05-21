@@ -36,7 +36,6 @@ const PhoneNumberFilter = ({setPatientList, setLoading}) => {
     const q = query(collection(db, "users"), where("phoneNumber", "==", phoneNumber));
     getDocs(q)
       .then(docs => {
-        console.log("docs fetched from hook: ")
         if(docs.docs.length>0) {
           let data = [];
           docs.docs.forEach((doc) => {

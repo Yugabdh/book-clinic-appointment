@@ -19,7 +19,7 @@ const DoctorDashboardPage = () => {
     dispatch(makeVisible());
   }, [dispatch]);
 
-  const [patientUID, setPatientUID] = useState('');
+  const [patient, setPatient] = useState({});
   const [loading, setLoading] = useState(false);
 
   return(
@@ -27,12 +27,12 @@ const DoctorDashboardPage = () => {
       <Container>
         <Row className="justify-content-center">
           <Col sm={12} lg={4}>
-            <PatientFilterComponent setPatientUID={setPatientUID} setLoading={setLoading} loading={loading} />
+            <PatientFilterComponent setPatient={setPatient} setLoading={setLoading} loading={loading} />
           </Col>
           <Col sm={12} lg={8} className="pt-5 pt-lg-0">
           <CardComponentWithHeading 
             heading={<h3 className="card-heading">Patient History</h3>}
-            children={<PatientDataComponent patientUID={patientUID} />}
+            children={<PatientDataComponent patient={patient} />}
           />
           </Col>
         </Row>

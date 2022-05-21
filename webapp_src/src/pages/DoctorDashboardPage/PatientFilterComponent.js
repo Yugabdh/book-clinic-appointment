@@ -11,7 +11,7 @@ import AppointmentsList from './AppointmentsList';
 import FullScreenLoaderComponent from '../../components/FullScreenLoaderComponent';
 import TodaysAppointments from './TodaysAppointments';
 
-const PatientFilterComponent = ({setPatientUID, setLoading, loading}) => {
+const PatientFilterComponent = ({setPatient, setLoading, loading}) => {
 
   const [patientList, setPatientList] = useState([]);
 
@@ -32,7 +32,7 @@ const PatientFilterComponent = ({setPatientUID, setLoading, loading}) => {
                       loading?
                       <FullScreenLoaderComponent />
                       : patientList.length > 0?
-                      <AppointmentsList setPatientUID={setPatientUID} appoinmentList={patientList} /> : <p>Search Result</p>
+                      <AppointmentsList setPatient={setPatient} appoinmentList={patientList} /> : <p>Search Result</p>
                     }
                   </div>
                 </Accordion.Body>
@@ -40,7 +40,7 @@ const PatientFilterComponent = ({setPatientUID, setLoading, loading}) => {
               <Accordion.Item eventKey="1">
                 <Accordion.Header>Today's Appointments</Accordion.Header>
                 <Accordion.Body>
-                  <TodaysAppointments setPatientUID={setPatientUID} />
+                  <TodaysAppointments setPatient={setPatient} />
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>

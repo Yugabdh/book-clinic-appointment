@@ -13,7 +13,7 @@ import {
 import AppointmentsList from './AppointmentsList';
 import FullScreenLoaderComponent from '../../components/FullScreenLoaderComponent';
 
-const TodaysAppointments = ({setPatientUID}) => {
+const TodaysAppointments = ({setPatient}) => {
 
   const [slotOneList, setSlotOneList] = useState([]);
   const [slotTwoList, setSlotTwoList] = useState([]);
@@ -109,28 +109,28 @@ const TodaysAppointments = ({setPatientUID}) => {
       slotOneList.length > 0? 
         <>
         <p className="slot-heading">Slot 1</p>
-        <AppointmentsList setPatientUID={setPatientUID} appoinmentList={slotOneList} />
+        <AppointmentsList setPatient={setPatient} appoinmentList={slotOneList} />
         </>:<></>
     }
     {loading2? <FullScreenLoaderComponent />: 
       slotTwoList.length > 0? 
         <>
         <p className="slot-heading">Slot 2</p>
-        <AppointmentsList setPatientUID={setPatientUID} appoinmentList={slotTwoList} />
+        <AppointmentsList setPatient={setPatient} appoinmentList={slotTwoList} />
         </>:<></>
     }
     {loading3? <FullScreenLoaderComponent />: 
       slotThreeList.length > 0? 
         <>
         <p className="slot-heading">Slot 3</p>
-        <AppointmentsList setPatientUID={setPatientUID} appoinmentList={slotThreeList} />
+        <AppointmentsList setPatient={setPatient} appoinmentList={slotThreeList} />
         </>:<></>
     }
     {loading4? <FullScreenLoaderComponent />: 
       slotFourList.length > 0? 
         <>
         <p className="slot-heading">Slot 4</p>
-        <AppointmentsList setPatientUID={setPatientUID} appoinmentList={slotFourList} />
+        <AppointmentsList setPatient={setPatient} appoinmentList={slotFourList} />
         </>:<></>
     }
     </div>
