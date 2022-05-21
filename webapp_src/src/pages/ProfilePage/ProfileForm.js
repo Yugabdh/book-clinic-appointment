@@ -48,6 +48,7 @@ const ProfileForm = () => {
       firstName: values.firstName,
       lastName: values.lastName,
       fullName: values.firstName + " " + values.lastName,
+      fullNameLower: values.firstName.toLowerCase() + " " + values.lastName.toLowerCase(),
       age: values.age,
       gender: values.gender,
     }, { merge: true })

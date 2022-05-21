@@ -30,7 +30,7 @@ const UserNameFilter = ({setPatientList, setLoading}) => {
 
   async function search() {
     setLoading(true);
-    const q = query(collection(db, "users"), where("fullName", ">=", values.username), where("fullName", "<=", values.username+ '\uf8ff'));
+    const q = query(collection(db, "users"), where("fullNameLower", ">=", values.username.toLowerCase()), where("fullNameLower", "<=", values.username.toLowerCase()+ '\uf8ff'));
     getDocs(q)
       .then(docs => {
         console.log("docs fetched from hook: ")
