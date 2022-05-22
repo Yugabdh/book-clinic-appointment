@@ -3,6 +3,7 @@ from tkinter.messagebox import showerror, showwarning, askyesno
 from firebase_admin import auth
 
 from make_changes import MakeChangesInUser
+from add_user import AddUser
 
 
 class CheckUser(tk.Frame):
@@ -50,7 +51,13 @@ class CheckUser(tk.Frame):
                         self.parent.switch_frame(MakeChangesInUser)
 
             except auth.UserNotFoundError:
-                showwarning(
-                    title="Error",
-                    message="User not found with phone number: " + phone_number)
+                answer = askyesno(
+                        title="User not found",
+                        message="User not found with phone number: " + phone_number+ ". Do you want to add this user?")
+
+                if answer:
+                    data = self.parent.get_store()
+                    data["phoneNumber"] = "+91" + phone_number
+                    self.parent.set_store(data)
+                    self.parent.switch_frame(AddUser)
 
