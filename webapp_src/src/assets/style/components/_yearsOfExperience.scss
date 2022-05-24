@@ -1,0 +1,52 @@
+@use '../base' as base;
+
+.years-of-experience {
+  height: 40vh;
+  position: relative;
+  overflow: hidden;
+
+  .mask {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .years-of-experience-wrapper {
+    .call {
+      .call-text {
+        font-weight: base.$bold;
+        font-size: 3rem;
+
+        .years-count {
+          color: base.$primary-2;
+        }
+      }
+      .dot {
+        height: 15px;
+        width: 15px;
+        background-color: base.$primary-2;
+        border-radius: 50%;
+        display: inline-block;
+        padding: 5px;
+      }
+    }
+    .action {
+      padding-top: 24px;
+    }
+  }
+
+  @include base.respond-to(medium) {
+    height: 50vh;
+    .years-of-experience-wrapper {
+      .call {
+        .call-text {
+          font-size: 2rem;
+        }
+      }
+    }
+  }
+}
