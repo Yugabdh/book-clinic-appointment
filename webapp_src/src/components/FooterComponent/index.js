@@ -5,7 +5,7 @@ const FooterComponent = () => {
   return (
       <footer>
           <Container className="d-flex justify-content-center">
-            <p>Designed And Developed by Yugabdh</p>
+            <p>Ragul Family Dental @2022</p>
           </Container>
       </footer>
   );

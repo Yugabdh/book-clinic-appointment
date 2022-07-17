@@ -7,11 +7,6 @@ import Col from 'react-bootstrap/Col';
 import SectionComponent from '../SectionComponent/';
 
 const Content = () => {
-  const location = {
-    address: '1600 Amphitheatre Parkway, Mountain View, california.',
-    lat: 37.42216,
-    lng: -122.08427,
-  }
 
   return (
     <Container className="contact-wrapper">
@@ -19,11 +14,11 @@ const Content = () => {
         <Col md={12} lg={6}>
           <div className="contact-item">
             <h5>Contact Number</h5>
-            <p>+91 098 7654 321</p>
+            <p>+91 8898166023</p>
           </div>
           <div className="contact-item">
             <h5>Contact Address</h5>
-            <p>Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>
+            <p>400706, Sector 44A, Seawoods, Navi Mumbai, Maharashtra 400706</p>
           </div>
         </Col>
         <Col md={12} lg={6}>
