@@ -23,3 +23,8 @@ pip install -r requirements.txt
 ```
 python3 main.py
 ```
+
+## To generate EXE
+```
+pyinstaller --onefile --windowed --icon="assets/logo.ico" main.py
+```
