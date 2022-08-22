@@ -311,7 +311,7 @@ const AppointmentForm = () => {
             onHide={
               () => {
                 setModalShow(false); 
-                navigate("/dashboard", { replace: true });
+                navigate("/profile", { replace: true });
               }
             }
           />
