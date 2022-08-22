@@ -33,7 +33,6 @@ const UserNameFilter = ({setPatientList, setLoading}) => {
     const q = query(collection(db, "users"), where("fullNameLower", ">=", values.username.toLowerCase()), where("fullNameLower", "<=", values.username.toLowerCase()+ '\uf8ff'));
     getDocs(q)
       .then(docs => {
-        console.log("docs fetched from hook: ")
         if(docs.docs.length>0) {
           let data = [];
           docs.docs.forEach((doc) => {

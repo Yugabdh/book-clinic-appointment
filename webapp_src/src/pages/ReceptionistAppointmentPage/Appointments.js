@@ -23,7 +23,6 @@ const Appointments = ({ formDate }) => {
   }
 
   const { currentUser } = useAuth();
-  console.log('Appointments: '+convertDate(formDate));
   const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
@@ -34,7 +33,6 @@ const Appointments = ({ formDate }) => {
         appointments.push(doc.data());
       });
       setAppointments(appointments);
-      console.log("Appointments: ", appointments);
     });
     return unsubscribe;
   }, [currentUser.uid, formDate]);

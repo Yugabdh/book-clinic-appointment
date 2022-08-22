@@ -18,7 +18,6 @@ const useLogin = (values) => {
       {
         'size': 'invisible',
         'callback': (response) => {
-          console.log('generateRecaptcha');
           onSuccess(true);
         }
       },

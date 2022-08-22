@@ -72,7 +72,6 @@ const AppointmentForm = () => {
         const userRef = collection(db, "users");
         const q = query(userRef, where("phoneNumber", "==", phoneNumber));
         const querySnapshot = await getDocs(q);
-        console.log(querySnapshot.size);
         if (querySnapshot.size === 1) {
           querySnapshot.forEach((doc) => {
             setModalData({

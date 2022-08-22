@@ -20,7 +20,6 @@ const UserAuthCheckComponent = ({children}) => {
         // setting up claims
         let doctor=false, receptionist=false;
         loggedInUser.getIdTokenResult().then((idTokenResult) => {
-          console.log(idTokenResult);
           // Confirm the user is an Receptionist.
           if (!!idTokenResult.claims.receptionist) {
             receptionist = true;
@@ -34,7 +33,6 @@ const UserAuthCheckComponent = ({children}) => {
         }).finally(() => {
           dispatch(setClaims({doctor: doctor, receptionist: receptionist}));
           dispatch(setUser({uid: loggedInUser.uid, phoneNumber: loggedInUser.phoneNumber}));
-          console.log("called from route");
           setLoading(false);
         });
       } else {

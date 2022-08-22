@@ -26,7 +26,6 @@ export  function AuthProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
       if (user) {
-        console.log(user);
         user.getIdTokenResult().then((idTokenResult) => {
           // Confirm the user is an Receptionist.
           if (!!idTokenResult.claims.receptionist) {

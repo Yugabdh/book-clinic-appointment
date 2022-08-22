@@ -22,7 +22,6 @@ const ReceptionAppointmentsTabelComponent = (props) => {
     let slot = props.slot;
 
     if(appointmentId) {
-      console.log('Appointment Id: ' + appointmentId+' userId: ' + uid+' slot: ' + slot+' userAppointmentId: '+userAppointmentId);
 
       await setDoc(doc(db, "appointments/"+props.formDate+"/"+slot, appointmentId), {
         status: "approved"
@@ -43,16 +42,13 @@ const ReceptionAppointmentsTabelComponent = (props) => {
     let slot = props.slot;
 
     if(appointmentId) {
-      console.log('Appointment Id: ' + appointmentId+' userId: ' + uid+' slot: ' + slot+' userAppointmentId: '+userAppointmentId);
       await deleteDoc(doc(db, "appointments/"+props.formDate+"/"+slot, appointmentId));
       const slotcounterRef = doc(db, "appointments", props.formDate);
       const docSnap = await getDoc(slotcounterRef);
 
       if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
         const slotdata = docSnap.data();
         slotdata[slot+"_counter"] -= 1;
-        console.log(slotdata)
         await setDoc(slotcounterRef, {
           ...slotdata
         }).then((ref)=> {

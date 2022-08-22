@@ -38,7 +38,6 @@ const useGetUserData = () => {
           console.log("docs fetched from hook: ")
           if(docs.docs.length>0) {
             if (docs.docs[0].data()) {
-              console.log("docs fetched from hook: "+docs.docs[0])
               dispatch(setUser({
                 ...docs.docs[0].data()
               }));

@@ -76,13 +76,10 @@ const LoginForm = () => {
         let confirmationResult = window.confirmationResult;
         confirmationResult.confirm(values.otp).then((result) => {
           const user = result.user;
-          console.log(user);
-          console.log(user.uid);
           if (user) {
             // setting up claims
             let doctor=false, receptionist=false;
             user.getIdTokenResult().then((idTokenResult) => {
-              console.log(idTokenResult);
               // Confirm the user is an Receptionist.
               if (!!idTokenResult.claims.receptionist) {
                 receptionist = true;

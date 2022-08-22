@@ -24,7 +24,6 @@ const Appointments = ({ user, formDate }) => {
 
   useEffect(() => {
     let date = convertDate(formDate);
-    console.log(date);
     const q = query(collection(db, "users/"+user.uid, "appointments"), where("date", "==", date));
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const appointments = [];
@@ -40,7 +39,6 @@ const Appointments = ({ user, formDate }) => {
         return 0;
       });
       setAppointments(appointments);
-      console.log("Appointments: ", appointments);
     });
     return unsubscribe;
   }, [user.uid, formDate]);
