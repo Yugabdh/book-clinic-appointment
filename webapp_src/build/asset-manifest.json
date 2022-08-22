@@ -1,17 +1,17 @@
 {
   "files": {
     "main.css": "/static/css/main.fc7868ef.css",
-    "main.js": "/static/js/main.c59e0248.js",
+    "main.js": "/static/js/main.67578966.js",
     "static/media/hero-header.png": "/static/media/hero-header.8031f1714b3eb687925e.png",
     "static/media/call-to-action.png": "/static/media/call-to-action.67ee039f3c44433bf0e6.png",
     "static/media/tooth-color.png": "/static/media/tooth-color.9918904285bdfa9493c2.png",
     "static/media/tooth-white.png": "/static/media/tooth-white.3b1a8674e5b018c16d76.png",
     "index.html": "/index.html",
     "main.fc7868ef.css.map": "/static/css/main.fc7868ef.css.map",
-    "main.c59e0248.js.map": "/static/js/main.c59e0248.js.map"
+    "main.67578966.js.map": "/static/js/main.67578966.js.map"
   },
   "entrypoints": [
     "static/css/main.fc7868ef.css",
-    "static/js/main.c59e0248.js"
+    "static/js/main.67578966.js"
   ]
 }
