@@ -33,10 +33,10 @@ const YearsOfExperience = () => {
                 alt="logo"
               />
               <p className="call-text"><span className="years-count">{experience}+</span> Years of Experience</p>
-              <span class="dot"></span>&nbsp;
-              <span class="dot"></span>&nbsp; 
-              <span class="dot"></span>&nbsp; 
-              <span class="dot"></span>
+              <span className="dot"></span>&nbsp;
+              <span className="dot"></span>&nbsp; 
+              <span className="dot"></span>&nbsp; 
+              <span className="dot"></span>
             </div>
           </Container>
       </div>
